@@ -133,10 +133,9 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-background text-foreground">
       <main className="container mx-auto p-4 sm:p-6 lg:p-8">
         <Tabs defaultValue="goals" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="goals"><Target className="w-4 h-4 mr-2"/>Goals</TabsTrigger>
             <TabsTrigger value="spending"><DollarSign className="w-4 h-4 mr-2"/>Spending</TabsTrigger>
-            <TabsTrigger value="settings"><Settings className="w-4 h-4 mr-2"/>Settings</TabsTrigger>
           </TabsList>
 
           <TabsContent value="goals">
@@ -233,29 +232,6 @@ export default function DashboardPage() {
                 </Card>
               </div>
             </div>
-          </TabsContent>
-
-          <TabsContent value="settings">
-            <Card>
-              <CardHeader>
-                <CardTitle>Settings</CardTitle>
-                <CardDescription>Manage your account and collaboration settings.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-medium mb-2">Collaborative Budgeting</h3>
-                  <Card className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <Group className="w-6 h-6 mr-4 text-primary"/>
-                        <p>You are managing finances on your own.</p>
-                      </div>
-                      <Button>Invite Partner</Button>
-                    </div>
-                  </Card>
-                </div>
-              </CardContent>
-            </Card>
           </TabsContent>
         </Tabs>
       </main>

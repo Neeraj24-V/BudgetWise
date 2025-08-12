@@ -1,7 +1,10 @@
 
 "use client";
 
+import { usePathname } from 'next/navigation';
 import { ThemeToggle } from "@/components/theme-toggle";
+import { cn } from '@/lib/utils';
+import { Settings } from 'lucide-react';
 
 const BudgetWiseLogo = ({ className }: {className?: string}) => (
     <svg
@@ -18,6 +21,9 @@ const BudgetWiseLogo = ({ className }: {className?: string}) => (
 );
 
 export function Header() {
+  const pathname = usePathname();
+  const isHomePage = pathname === '/';
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-14 items-center">
@@ -27,15 +33,28 @@ export function Header() {
             </a>
             <div className="flex flex-1 items-center justify-end space-x-2">
                 <nav className="hidden md:flex items-center space-x-2">
-                    <a href="/dashboard" className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-primary">
-                        Dashboard
-                    </a>
-                    <a href="/login" className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-primary">
-                        Login
-                    </a>
-                    <a href="/register" className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md text-sm font-medium">
-                        Register
-                    </a>
+                    {isHomePage ? (
+                        <>
+                            <a href="/dashboard" className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-primary">
+                                Dashboard
+                            </a>
+                            <a href="/login" className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-primary">
+                                Login
+                            </a>
+                            <a href="/register" className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md text-sm font-medium">
+                                Register
+                            </a>
+                        </>
+                    ) : (
+                       <>
+                            <a href="/dashboard" className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-primary">
+                                Dashboard
+                            </a>
+                            <a href="/settings" className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-primary flex items-center">
+                               <Settings className="w-4 h-4 mr-1" /> Settings
+                            </a>
+                       </>
+                    )}
                 </nav>
                 <ThemeToggle />
             </div>
