@@ -1,11 +1,47 @@
+
 "use client";
 
-import { PiggyBank, BarChart3, ListChecks } from "lucide-react";
+import { BarChart3, ListChecks } from "lucide-react";
 import { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const Logo = ({ className }: { className?: string }) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+      <path d="M12 3v18" />
+    </svg>
+  );
+  
+const FinFlowLogo = ({ className }: {className?: string}) => (
+    <svg
+      role="img"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+        <path
+            d="M8.33333 3V9.5M8.33333 9.5V16M8.33333 9.5H18.3333M13.3333 16V21M13.3333 16H3.33333"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        ></path>
+    </svg>
+);
+
 
 export default function Home() {
   const root = useRef(null);
@@ -54,7 +90,7 @@ export default function Home() {
       description: "Easily log your daily expenses and categorize them to see where your money is going. Stay on top of your spending with minimal effort.",
     },
     {
-      icon: <PiggyBank className="h-8 w-8 text-white" />,
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2a2 2 0 0 0 2-2c0-1.1-.9-2-2-2Z"/></svg>,
       title: "Smart Budgeting",
       description: "Create custom budgets for different categories and get notified when you're approaching your limits. Plan your finances and save more effectively.",
     },
@@ -70,8 +106,8 @@ export default function Home() {
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 flex h-14 items-center">
           <a href="/" className="flex items-center space-x-2">
-            <PiggyBank className="h-6 w-6 text-primary" />
-            <span className="font-bold inline-block">ExpenseTracker</span>
+            <FinFlowLogo className="h-6 w-6 text-primary" />
+            <span className="font-bold inline-block">FinFlow</span>
           </a>
           <div className="flex flex-1 items-center justify-end space-x-4">
             <nav className="flex items-center space-x-2">
@@ -139,7 +175,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-8 bg-background">
           <div className="container mx-auto px-4 text-center text-muted-foreground">
-              <p>&copy; {new Date().getFullYear()} Expense Tracker. All rights reserved.</p>
+              <p>&copy; {new Date().getFullYear()} FinFlow. All rights reserved.</p>
           </div>
       </footer>
     </div>
