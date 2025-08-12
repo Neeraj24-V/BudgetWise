@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Rajdhani } from "next/font/google";
+import { Syncopate } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const rajdhani = Rajdhani({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"], variable: "--font-sans" });
+const syncopate = Syncopate({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "FinFlow - Take Control of Your Finances",
@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn("min-h-screen bg-background font-sans antialiased", rajdhani.variable)}>
+      <body className={cn("min-h-screen bg-background font-sans antialiased", syncopate.variable)}>
         <ThemeProvider
             attribute="class"
             defaultTheme="dark"
