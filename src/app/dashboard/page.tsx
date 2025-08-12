@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactElement } from 'react';
 import { Bot, Send, User, Target, PiggyBank, Briefcase, Car, GraduationCap, Sparkles, DollarSign, Wallet, Group, Settings, X, PlusCircle, Utensils, Bus, Film, ShoppingBag, TrendingUp, ArrowRight } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,29 @@ interface Message {
   text: string;
   isUser: boolean;
 }
+
+interface Transaction {
+  id: number;
+  name: string;
+  amount: number;
+  category: string;
+}
+
+interface BudgetCategory {
+  id: number;
+  name: string;
+  icon: string;
+  budget: number;
+  spent: number;
+  transactions: Transaction[];
+}
+
+const iconComponents: { [key: string]: ReactElement } = {
+  ShoppingBag: <ShoppingBag className="w-6 h-6" />,
+  Bus: <Bus className="w-6 h-6" />,
+  Film: <Film className="w-6 h-6" />,
+  Utensils: <Utensils className="w-6 h-6" />,
+};
 
 const weeklyData = [
   { name: 'Mon', total: 0 },
@@ -127,76 +150,11 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
   )
 }
 
-const budgetCategories = [
-    {
-      id: 1,
-      name: 'Groceries',
-      icon: <ShoppingBag className="w-6 h-6" />,
-      budget: 500,
-      spent: 285.50,
-      transactions: [
-        { id: 1, name: 'SuperMart', amount: 120.75, category: 'Groceries' },
-        { id: 2, name: 'Local Market', amount: 75.25, category: 'Groceries' },
-        { id: 3, name: 'SuperMart', amount: 89.50, category: 'Groceries' },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Transport',
-      icon: <Bus className="w-6 h-6" />,
-      budget: 150,
-      spent: 85.00,
-      transactions: [
-        { id: 1, name: 'Metro Pass', amount: 65.00, category: 'Transport' },
-        { id: 2, name: 'Ride Share', amount: 20.00, category: 'Transport' },
-      ],
-    },
-    {
-        id: 3,
-        name: 'Entertainment',
-        icon: <Film className="w-6 h-6" />,
-        budget: 200,
-        spent: 124.99,
-        transactions: [
-            { id: 1, name: 'Movie Tickets', amount: 30.00, category: 'Entertainment' },
-            { id: 2, name: 'Streaming Svc', amount: 14.99, category: 'Entertainment' },
-            { id: 3, name: 'Concert', amount: 80.00, category: 'Entertainment' },
-        ],
-    },
-     {
-      id: 4,
-      name: 'Dining Out',
-      icon: <Utensils className="w-6 h-6" />,
-      budget: 250,
-      spent: 180.25,
-      transactions: [
-        { id: 1, name: 'The Great Cafe', amount: 45.50, category: 'Dining Out' },
-        { id: 2, name: 'Pizza Place', amount: 30.00, category: 'Dining Out' },
-        { id: 3, name: 'Local Restaurant', amount: 104.75, category: 'Dining Out' },
-      ],
-    },
-];
-
-const totalBudget = budgetCategories.reduce((acc, cat) => acc + cat.budget, 0);
-const totalSpent = budgetCategories.reduce((acc, cat) => acc + cat.spent, 0);
-
-
 const upcomingBills = [
   { id: 1, name: 'Netflix', date: 'June 25', amount: 15.49 },
   { id: 2, name: 'Phone Bill', date: 'June 28', amount: 75.20 },
   { id: 3, name: 'Rent', date: 'July 1', amount: 1800.00 },
 ];
-
-const categorySpendingData = [
-  { name: 'Groceries', spent: 285.50 },
-  { name: 'Dining Out', spent: 180.25 },
-  { name: 'Entertainment', spent: 124.99 },
-  { name: 'Transport', spent: 85.00 },
-  { name: 'Shopping', spent: 150.00 },
-];
-
-const transactionHistory = budgetCategories.flatMap(c => c.transactions);
-
 
 function AddExpenseModal({ categoryName, isOpen, onOpenChange }: { categoryName: string, isOpen: boolean, onOpenChange: (isOpen: boolean) => void }) {
   return (
@@ -246,14 +204,34 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-
 export default function DashboardPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   
+  const [budgetCategories, setBudgetCategories] = useState<BudgetCategory[]>([]);
+  const [transactionHistory, setTransactionHistory] = useState<Transaction[]>([]);
+
   const [dynamicWeeklyData, setDynamicWeeklyData] = useState(weeklyData);
   const [dynamicMonthlyData, setDynamicMonthlyData] = useState(monthlyData);
+  
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const budgetsRes = await fetch('/api/budgets');
+        const budgetsData = await budgetsRes.json();
+        setBudgetCategories(budgetsData);
+
+        const transactionsRes = await fetch('/api/transactions');
+        const transactionsData = await transactionsRes.json();
+        setTransactionHistory(transactionsData);
+
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    }
+    fetchData();
+  }, []);
 
   useEffect(() => {
     // This effect runs only once on the client, after hydration
@@ -261,6 +239,10 @@ export default function DashboardPage() {
     setDynamicMonthlyData(monthlyData.map(d => ({ ...d, total: Math.floor(Math.random() * 500) + 200 })));
   }, []);
 
+  const totalBudget = budgetCategories.reduce((acc, cat) => acc + cat.budget, 0);
+  const totalSpent = budgetCategories.reduce((acc, cat) => acc + cat.spent, 0);
+
+  const categorySpendingData = budgetCategories.map(c => ({ name: c.name, spent: c.spent }));
 
   const handleAddExpenseClick = (categoryName: string) => {
     setSelectedCategory(categoryName);
@@ -285,7 +267,7 @@ export default function DashboardPage() {
                   </TabsList>
                   <div className="space-y-1 text-right">
                     <p className="text-sm text-muted-foreground">Total Spent (This Month)</p>
-                    <p className="text-2xl font-bold">$2,450.75</p>
+                    <p className="text-2xl font-bold">${totalSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                   </div>
               </div>
               <TabsContent value="weekly">
@@ -383,7 +365,7 @@ export default function DashboardPage() {
                             <p className="text-2xl font-bold text-green-500">${(totalBudget - totalSpent).toLocaleString()}</p>
                         </div>
                     </div>
-                    <Progress value={(totalSpent / totalBudget) * 100} className="mt-4" />
+                    <Progress value={(totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0)} className="mt-4" />
                 </CardContent>
             </Card>
 
@@ -393,7 +375,7 @@ export default function DashboardPage() {
                         <CardHeader className="flex flex-row items-center justify-between">
                             <div className="flex items-center space-x-4">
                                 <div className="p-3 bg-secondary rounded-full">
-                                    {category.icon}
+                                    {iconComponents[category.icon]}
                                 </div>
                                 <div>
                                     <CardTitle className="text-xl">{category.name}</CardTitle>
@@ -406,7 +388,7 @@ export default function DashboardPage() {
                             </Button>
                         </CardHeader>
                         <CardContent>
-                            <Progress value={(category.spent / category.budget) * 100} className="mb-4 h-2" />
+                            <Progress value={(category.budget > 0 ? (category.spent / category.budget) * 100 : 0)} className="mb-4 h-2" />
                             <ul className="space-y-2 text-sm">
                                 {category.transactions.map(tx => (
                                     <li key={tx.id} className="flex justify-between items-center">
@@ -437,7 +419,7 @@ export default function DashboardPage() {
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={categorySpendingData} layout="vertical" margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                         <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
-                        <YAxis type="category" dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                        <YAxis type="category" dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} width={80} />
                         <Tooltip content={<CustomTooltip />} cursor={{fill: 'hsl(var(--primary) / 0.1)'}} />
                         <Bar dataKey="spent" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
                       </BarChart>
