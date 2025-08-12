@@ -118,7 +118,7 @@ export default function Home() {
 
   return (
     <div ref={root} className="min-h-screen text-foreground overflow-x-hidden bg-black">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/30 backdrop-blur-lg">
+      <header className="sticky top-0 z-50 w-full border-b bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-14 items-center">
           <a href="/" className="flex items-center space-x-2">
             <FinFlowLogo className="h-6 w-6 text-primary" />
