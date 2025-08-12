@@ -317,7 +317,7 @@ const CustomTooltip = ({ active, payload, label, currencySymbol }: any) => {
     return (
       <div className="p-2 text-xs rounded-lg shadow-md bg-background border">
         <p className="font-bold text-foreground">{`${name}`}</p>
-        <p className="text-muted-foreground">{`Spent: ${currencySymbol}${value.toFixed(2)}`}</p>
+        <p className="text-muted-foreground">{`Amount: ${currencySymbol}${value.toFixed(2)}`}</p>
       </div>
     );
   }
@@ -415,6 +415,8 @@ export default function DashboardPage() {
   const totalSpent = Array.isArray(budgetCategories) ? budgetCategories.reduce((acc, cat) => acc + cat.spent, 0) : 0;
 
   const categorySpendingData = Array.isArray(budgetCategories) ? budgetCategories.map(c => ({ name: c.name, value: c.spent })) : [];
+  
+  const topTransactionsData = Array.isArray(transactionHistory) ? [...transactionHistory].sort((a, b) => b.amount - a.amount).slice(0, 5).map(tx => ({ name: tx.name, value: tx.amount })) : [];
 
 
   const handleAddExpenseClick = (categoryName: string) => {
@@ -614,16 +616,22 @@ export default function DashboardPage() {
                 </Card>
                 <Card>
                   <CardHeader>
-                    <CardTitle>Spending by Category</CardTitle>
-                    <CardDescription>A visual breakdown of where your money is going.</CardDescription>
+                    <CardTitle>Top Transactions</CardTitle>
+                    <CardDescription>Your biggest individual purchases this period.</CardDescription>
                   </CardHeader>
                   <CardContent className="h-[250px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={categorySpendingData} layout="vertical" margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                      <BarChart data={topTransactionsData} layout="vertical" margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
                         <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${currencySymbol}${value}`} />
                         <YAxis type="category" dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} width={80} />
                         <Tooltip content={<CustomTooltip currencySymbol={currencySymbol} />} cursor={{fill: 'hsl(var(--primary) / 0.1)'}} />
-                        <Bar dataKey="value" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
+                        <Bar dataKey="value" fill="hsl(var(--accent))" radius={[0, 4, 4, 0]}>
+                            {
+                                topTransactionsData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                                ))
+                            }
+                        </Bar>
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
