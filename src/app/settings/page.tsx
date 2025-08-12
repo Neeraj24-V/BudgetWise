@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function SettingsPage() {
   return (
@@ -12,9 +13,20 @@ export default function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Profile</CardTitle>
-              <CardDescription>Update your personal information.</CardDescription>
+              <CardDescription>Update your personal information and profile picture.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
+              <div className="flex items-center space-x-6">
+                <Avatar className="h-24 w-24">
+                  <AvatarImage src="https://placehold.co/100x100.png" alt="User profile picture" data-ai-hint="person portrait" />
+                  <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+                <div className="space-y-2">
+                    <label htmlFor="picture" className="text-sm font-medium leading-none">Profile Picture</label>
+                    <Input id="picture" type="file" className="max-w-xs" />
+                    <p className="text-xs text-muted-foreground">Upload a new photo. PNG, JPG, GIF up to 10MB.</p>
+                </div>
+              </div>
               <div className="space-y-2">
                 <label htmlFor="name">Name</label>
                 <Input id="name" defaultValue="John Doe" />
