@@ -16,18 +16,7 @@ const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
-  session: {
-    strategy: "jwt" as const,
-  },
   secret: process.env.NEXTAUTH_SECRET,
-  callbacks: {
-    async session({ session, token }: { session: any; token: any }) {
-      if (token) {
-        session.user.id = token.sub; // Add user ID to the session object
-      }
-      return session;
-    },
-  },
   pages: {
     signIn: '/login',
   },
