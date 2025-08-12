@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
 import { CurrencyProvider } from "@/context/currency-context";
-import SessionProvider from "@/components/session-provider";
 
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -30,12 +29,10 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
         >
-          <SessionProvider>
             <CurrencyProvider>
               <Header />
               {children}
             </CurrencyProvider>
-          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -2,7 +2,6 @@
 "use client";
 
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { useSession } from 'next-auth/react';
 
 export type Currency = 'USD' | 'EUR' | 'GBP' | 'JPY' | 'INR';
 type CurrencySymbol = '$' | '€' | '£' | '¥' | '₹';
@@ -30,23 +29,30 @@ export const CurrencyContext = createContext<CurrencyContextType>({
 });
 
 export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
-    const { data: session, status } = useSession();
     const [currency, setCurrency] = useState<Currency>('USD');
-    const isLoading = status === 'loading';
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (status === 'authenticated' && session?.user) {
-            const userCurrency = (session.user as any).currency;
-            if (userCurrency && currencySymbols[userCurrency]) {
-                setCurrency(userCurrency);
+        // This code now runs only on the client
+        try {
+            const savedCurrency = localStorage.getItem('currency') as Currency;
+            if (savedCurrency && currencySymbols[savedCurrency]) {
+                setCurrency(savedCurrency);
             }
+        } catch (error) {
+            console.error("Could not access localStorage. Defaulting to USD.");
         }
-    }, [session, status]);
+        setIsLoading(false);
+    }, []);
 
     const handleSetCurrency = (newCurrency: Currency) => {
         if (currencySymbols[newCurrency]) {
             setCurrency(newCurrency);
-            // The actual database update is now handled in the SettingsPage
+             try {
+                localStorage.setItem('currency', newCurrency);
+            } catch (error) {
+                console.error("Could not access localStorage to save currency preference.");
+            }
         }
     };
     

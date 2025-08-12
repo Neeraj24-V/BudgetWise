@@ -1,10 +1,10 @@
 
 "use client";
 
-import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BudgetWiseLogo } from "@/components/logo";
+import Link from "next/link";
 
 const GoogleIcon = () => (
     <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
@@ -14,6 +14,9 @@ const GoogleIcon = () => (
 
 
 export default function LoginPage() {
+  const handleSignIn = () => {
+    alert("Login functionality is temporarily disabled. Please check back later.");
+  }
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <Card className="w-full max-w-sm">
@@ -27,11 +30,17 @@ export default function LoginPage() {
         <CardContent>
           <Button 
             className="w-full" 
-            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+            onClick={handleSignIn}
           >
             <GoogleIcon />
             Sign in with Google
           </Button>
+           <p className="mt-4 text-center text-sm text-muted-foreground">
+              Don't have an account?{' '}
+              <Link href="#" onClick={(e) => {e.preventDefault(); handleSignIn()}} className="text-primary hover:underline">
+                Register
+              </Link>
+            </p>
         </CardContent>
       </Card>
     </div>

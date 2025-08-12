@@ -9,49 +9,19 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CurrencyContext, Currency } from '@/context/currency-context';
-import { useSession } from 'next-auth/react';
 
 export default function SettingsPage() {
-    const { data: session, update: updateSession } = useSession();
     const { currency, setCurrency } = useContext(CurrencyContext);
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-
-    useEffect(() => {
-        if (session?.user) {
-            setName(session.user.name || '');
-            setEmail(session.user.email || '');
-        }
-    }, [session]);
+    const [name, setName] = useState('Guest User');
+    const [email, setEmail] = useState('guest@example.com');
 
     const handleProfileUpdate = () => {
-        alert('Profile update functionality coming soon!');
+        alert('Please log in to update your profile.');
     };
 
-    const handleCurrencyChange = async (newCurrency: Currency) => {
-        setCurrency(newCurrency); // Update context immediately for responsive UI
-
-        try {
-            const response = await fetch('/api/user', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ currency: newCurrency }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to update currency');
-            }
-            // Manually trigger a session update to refresh the data on the client
-            await updateSession({ ...session, user: { ...session?.user, currency: newCurrency } });
-            
-        } catch (error) {
-            console.error("Error updating currency:", error);
-            // Optionally revert the change in the UI if the API call fails
-            // setCurrency(currency); // Revert to old currency
-            alert("Failed to update currency preference.");
-        }
+    const handleCurrencyChange = (newCurrency: Currency) => {
+        setCurrency(newCurrency);
+        alert("Currency preference saved on this device.");
     }
 
   return (
@@ -67,22 +37,22 @@ export default function SettingsPage() {
             <CardContent className="space-y-6">
               <div className="flex items-center space-x-6">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src={session?.user?.image || "https://placehold.co/100x100.png"} alt="User profile picture" data-ai-hint="person portrait" />
+                  <AvatarImage src={"https://placehold.co/100x100.png"} alt="User profile picture" data-ai-hint="person portrait" />
                   <AvatarFallback>{name?.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="space-y-2">
                     <label htmlFor="picture" className="text-sm font-medium leading-none">Profile Picture</label>
-                    <Input id="picture" type="file" className="max-w-xs" />
+                    <Input id="picture" type="file" className="max-w-xs" disabled />
                     <p className="text-xs text-muted-foreground">Upload a new photo. PNG, JPG, GIF up to 10MB.</p>
                 </div>
               </div>
               <div className="space-y-2">
                 <label htmlFor="name">Name</label>
-                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} disabled/>
               </div>
               <div className="space-y-2">
                 <label htmlFor="email">Email</label>
-                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} disabled/>
               </div>
               <Button onClick={handleProfileUpdate}>Update Profile</Button>
             </CardContent>
@@ -126,18 +96,11 @@ export default function SettingsPage() {
               <CardDescription>Manage who you share your financial data with.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <p className="font-medium">Jane Doe</p>
-                        <p className="text-sm text-muted-foreground">jane.doe@example.com</p>
-                    </div>
-                    <Button variant="destructive">Remove</Button>
-                </div>
                  <div className="space-y-2">
                     <label htmlFor="invite">Invite new member</label>
                     <div className="flex space-x-2">
-                        <Input id="invite" type="email" placeholder="Enter email address" />
-                        <Button>Send Invite</Button>
+                        <Input id="invite" type="email" placeholder="Enter email address" disabled/>
+                        <Button disabled>Send Invite</Button>
                     </div>
                 </div>
             </CardContent>
