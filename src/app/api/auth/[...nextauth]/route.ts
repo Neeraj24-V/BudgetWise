@@ -1,8 +1,8 @@
+
 import NextAuth, { AuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 import { connectToDatabase } from '@/lib/mongodb';
-import {-next-auth.session-} from 'next-auth';
 
 if (!process.env.GOOGLE_CLIENT_ID) {
   throw new Error('Missing GOOGLE_CLIENT_ID in .env');
