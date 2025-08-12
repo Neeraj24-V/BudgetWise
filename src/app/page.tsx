@@ -156,10 +156,10 @@ export default function Home() {
             <div className="dark-mode-hidden">
               <Tubelight />
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 hero-element dark:tubelight-flicker-text">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 hero-element">
               Take Control of Your Finances
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 hero-element dark:tubelight-flicker-text" style={{animationDelay: '1s'}}>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 hero-element" style={{animationDelay: '1s'}}>
               An elegant solution to track your expenses, manage your budgets, and achieve your financial goals with confidence.
             </p>
             <div className="space-x-4 hero-element">
