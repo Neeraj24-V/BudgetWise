@@ -239,10 +239,11 @@ export default function DashboardPage() {
     setDynamicMonthlyData(monthlyData.map(d => ({ ...d, total: Math.floor(Math.random() * 500) + 200 })));
   }, []);
 
-  const totalBudget = budgetCategories.reduce((acc, cat) => acc + cat.budget, 0);
-  const totalSpent = budgetCategories.reduce((acc, cat) => acc + cat.spent, 0);
+  const totalBudget = Array.isArray(budgetCategories) ? budgetCategories.reduce((acc, cat) => acc + cat.budget, 0) : 0;
+  const totalSpent = Array.isArray(budgetCategories) ? budgetCategories.reduce((acc, cat) => acc + cat.spent, 0) : 0;
 
-  const categorySpendingData = budgetCategories.map(c => ({ name: c.name, spent: c.spent }));
+  const categorySpendingData = Array.isArray(budgetCategories) ? budgetCategories.map(c => ({ name: c.name, spent: c.spent })) : [];
+
 
   const handleAddExpenseClick = (categoryName: string) => {
     setSelectedCategory(categoryName);
@@ -370,7 +371,7 @@ export default function DashboardPage() {
             </Card>
 
             <div className="grid gap-6 md:grid-cols-2">
-                {budgetCategories.map(category => (
+                {Array.isArray(budgetCategories) && budgetCategories.map(category => (
                     <Card key={category.id}>
                         <CardHeader className="flex flex-row items-center justify-between">
                             <div className="flex items-center space-x-4">
@@ -441,7 +442,7 @@ export default function DashboardPage() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {transactionHistory.map((item, index) => (
+                        {Array.isArray(transactionHistory) && transactionHistory.map((item, index) => (
                           <TableRow key={index}>
                             <TableCell>{item.name}</TableCell>
                             <TableCell>{item.category}</TableCell>
