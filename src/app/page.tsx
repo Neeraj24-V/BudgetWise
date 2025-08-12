@@ -119,7 +119,7 @@ export default function Home() {
   return (
     <div ref={root} className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 flex h-14 items-center">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-14 items-center">
           <a href="/" className="flex items-center space-x-2">
             <FinFlowLogo className="h-6 w-6 text-primary" />
             <span className="font-bold inline-block">FinFlow</span>
@@ -143,11 +143,11 @@ export default function Home() {
 
       <main>
         {/* Hero Section */}
-        <section className="py-20 md:py-32 relative isolate overflow-hidden">
+        <section className="py-24 sm:py-32 relative isolate overflow-hidden">
           <div className="absolute inset-0 -z-10 bg-background [background:radial-gradient(50%_50%_at_50%_50%,hsl(var(--primary)/0.1),hsl(var(--background)))]"></div>
           <CurrencyFall />
-          <div className="container mx-auto px-4 text-center relative z-10">
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 hero-element">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 hero-element">
               Take Control of Your Finances
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 hero-element">
@@ -166,8 +166,8 @@ export default function Home() {
 
         {/* Features Section */}
         <section id="features" className="py-20 md:py-32 bg-secondary">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">
                 Everything You Need for Financial Clarity
               </h2>
@@ -191,8 +191,8 @@ export default function Home() {
 
         {/* How it Works Section */}
         <section className="py-20 md:py-32 how-it-works-section bg-background">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">
                 Get Started in 3 Easy Steps
               </h2>
@@ -201,21 +201,21 @@ export default function Home() {
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-8 text-center">
-              <div className="how-it-works-card">
+              <div className="how-it-works-card p-4">
                 <div className="flex justify-center items-center mb-4">
                   <div className="bg-primary text-primary-foreground rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold">1</div>
                 </div>
                 <h3 className="text-xl font-bold mb-2">Create Your Budget</h3>
                 <p className="text-muted-foreground">Set up your monthly and category budgets to stay on track.</p>
               </div>
-              <div className="how-it-works-card">
+              <div className="how-it-works-card p-4">
                 <div className="flex justify-center items-center mb-4">
                   <div className="bg-primary text-primary-foreground rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold">2</div>
                 </div>
                 <h3 className="text-xl font-bold mb-2">Log Your Expenses</h3>
                 <p className="text-muted-foreground">Easily add expenses as they happen with our simple interface.</p>
               </div>
-              <div className="how-it-works-card">
+              <div className="how-it-works-card p-4">
                 <div className="flex justify-center items-center mb-4">
                   <div className="bg-primary text-primary-foreground rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold">3</div>
                 </div>
@@ -228,8 +228,8 @@ export default function Home() {
 
         {/* Bento Box Section */}
         <section className="py-20 md:py-32 bg-secondary">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">Your Financial Command Center</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 All the tools you need, beautifully organized in one place.
@@ -264,7 +264,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="py-8 bg-background">
-          <div className="container mx-auto px-4 text-center text-muted-foreground">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-muted-foreground">
               <p>&copy; {new Date().getFullYear()} FinFlow. All rights reserved.</p>
           </div>
       </footer>
