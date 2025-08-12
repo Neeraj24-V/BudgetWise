@@ -5,7 +5,7 @@
 
 import { ai } from '@/ai/genkit';
 import { getBudgetsTool, getTransactionsTool } from '@/ai/tools/database-tools';
-import { Message } from 'genkit';
+import { Message, Part } from 'genkit';
 import { z } from 'zod';
 
 // Simplified schema for individual messages
@@ -21,17 +21,23 @@ const FinancialCoPilotInputSchema = z.object({
 });
 export type FinancialCoPilotInput = z.infer<typeof FinancialCoPilotInputSchema>;
 
+type GenkitMessage = {
+    role: 'user' | 'model' | 'tool';
+    content: Part[];
+};
+
+
 export async function financialCoPilotFlow(input: FinancialCoPilotInput): Promise<string> {
   const { history, message } = input;
 
   // Map the simplified history to Genkit Message objects.
-  const messages: Message[] = history.map(msg => new Message({
+  const messages: GenkitMessage[] = history.map(msg => ({
       role: msg.role,
-      content: [{ text: msg.content }] // Genkit expects content as an array of Parts
+      content: [{ text: msg.content }]
   }));
 
   // Add the new user message to the history
-  messages.push(new Message({ role: 'user', content: [{ text: message }] }));
+  messages.push({ role: 'user', content: [{ text: message }] });
 
   try {
     const llmResponse = await ai.generate({
