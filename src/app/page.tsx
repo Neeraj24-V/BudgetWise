@@ -7,6 +7,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CurrencyFall } from "@/components/currency-fall";
+import { Snowfall } from "@/components/snow-fall";
+import { Tubelight } from "@/components/tubelight";
 import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -144,12 +146,20 @@ export default function Home() {
       <main>
         {/* Hero Section */}
         <section className="py-24 sm:py-32 relative isolate overflow-hidden">
-          <CurrencyFall />
+          <div className="light-mode-hidden">
+            <CurrencyFall />
+          </div>
+          <div className="dark-mode-hidden">
+             <Snowfall />
+          </div>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 hero-element dark:tubelight-flicker">
+            <div className="dark-mode-hidden">
+              <Tubelight />
+            </div>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 hero-element dark:tubelight-flicker-text">
               Take Control of Your Finances
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 hero-element dark:tubelight-flicker" style={{animationDelay: '1s'}}>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 hero-element dark:tubelight-flicker-text" style={{animationDelay: '1s'}}>
               An elegant solution to track your expenses, manage your budgets, and achieve your financial goals with confidence.
             </p>
             <div className="space-x-4 hero-element">
@@ -267,6 +277,20 @@ export default function Home() {
               <p>&copy; {new Date().getFullYear()} FinFlow. All rights reserved.</p>
           </div>
       </footer>
+      <style jsx>{`
+        .light-mode-hidden {
+          display: none;
+        }
+        .dark .light-mode-hidden {
+          display: block;
+        }
+        .dark-mode-hidden {
+          display: block;
+        }
+        .dark .dark-mode-hidden {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 }
