@@ -20,16 +20,27 @@ export default function Home() {
         ease: "power3.out",
       });
 
-      gsap.from(".feature-card", {
-        opacity: 0,
-        y: 30,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: "power3.out",
-        scrollTrigger: {
-            trigger: "#features",
-            start: "top 80%",
+      const cards = gsap.utils.toArray('.feature-card');
+      cards.forEach((card, index) => {
+        let animationProps = {};
+        if (index === 0) { // Left card
+          animationProps = { x: -50 };
+        } else if (index === 1) { // Middle card
+          animationProps = { y: 50 };
+        } else { // Right card
+          animationProps = { x: 50 };
         }
+        
+        gsap.from(card as gsap.TweenTarget, {
+          ...animationProps,
+          opacity: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: card as gsap.TweenTarget,
+            start: "top 85%",
+          }
+        });
       });
     }, root);
 
@@ -55,7 +66,7 @@ export default function Home() {
   ];
 
   return (
-    <div ref={root} className="min-h-screen bg-background text-foreground">
+    <div ref={root} className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <main>
         {/* Hero Section */}
         <section className="py-20 md:py-32">
