@@ -22,7 +22,7 @@ import { financialCoPilotFlow, FinancialCoPilotInput } from '@/ai/flows/financia
 interface Message {
   id: string;
   role: 'user' | 'model';
-  content: { text: string }[];
+  content: string; // Simplified content to a string
 }
 
 
@@ -58,7 +58,7 @@ const iconOptions = Object.keys(iconComponents);
 
 function ChatInterface({ onClose }: { onClose: () => void }) {
   const [messages, setMessages] = useState<Message[]>([
-    { id: '1', role: 'model', content: [{text: "Hello! I'm your AI Financial Co-Pilot. How can I help you today?"}] },
+    { id: '1', role: 'model', content: "Hello! I'm your AI Financial Co-Pilot. How can I help you today?" },
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -70,7 +70,7 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
     const userMessage: Message = {
       id: (messages.length + 1).toString(),
       role: 'user',
-      content: [{text: input}],
+      content: input,
     };
     setMessages(prev => [...prev, userMessage]);
     
@@ -78,10 +78,10 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
     setInput('');
 
     try {
-      // The history needs to be in a specific format for the AI
+      // The history for the AI should be in the simplified format
       const historyForAI = messages.map(m => ({
         role: m.role,
-        content: m.content,
+        content: m.content, // Content is now just a string
       }));
 
       const flowInput: FinancialCoPilotInput = {
@@ -94,7 +94,7 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
       const aiMessage: Message = {
         id: (messages.length + 2).toString(),
         role: 'model',
-        content: [{ text: aiResponseText }],
+        content: aiResponseText,
       };
       setMessages(prev => [...prev, aiMessage]);
 
@@ -103,7 +103,7 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
       const errorMessage: Message = {
         id: (messages.length + 2).toString(),
         role: 'model',
-        content: [{text: "Sorry, I'm having trouble connecting to my brain right now. Please try again later."}],
+        content: "Sorry, I'm having trouble connecting to my brain right now. Please try again later.",
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -151,7 +151,7 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
                     : 'bg-muted'
                 )}
               >
-                <p>{message.content[0].text}</p>
+                <p>{message.content}</p>
               </div>
               {message.role === 'user' && (
                 <Avatar className="h-8 w-8 border">
