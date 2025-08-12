@@ -4,45 +4,61 @@
 
 @layer base {
   :root {
-    --background: 220 50% 98%;
+    --background-start-rgb: 220 50% 98%;
+    --background-end-rgb: 210 50% 90%;
+    --background: hsla(var(--background-start-rgb), 0.8);
     --foreground: 240 10% 15%;
-    --card: 0 0% 100%;
+
+    --card-background-rgb: 255 100% 100%;
+    --card: hsla(var(--card-background-rgb), 0.5);
     --card-foreground: 240 10% 15%;
-    --popover: 0 0% 100%;
+
+    --popover: hsla(var(--card-background-rgb), 0.5);
     --popover-foreground: 240 10% 15%;
+
     --primary: 130 90% 50%;
     --primary-foreground: 240 10% 15%;
-    --secondary: 240 4.8% 95.9%;
+
+    --secondary-background-rgb: 240 4.8% 95.9%;
+    --secondary: hsla(var(--secondary-background-rgb), 0.5);
     --secondary-foreground: 240 5.9% 10%;
+    
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
+    
     --accent: 130 80% 40%;
     --accent-foreground: 0 0% 98%;
+    
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
+
+    --border: hsla(240, 5.9%, 90%, 0.3);
+    --input: hsla(240, 5.9%, 90%, 0.3);
     --ring: 130 90% 50%;
     --radius: 0.5rem;
   }
  
   .dark {
-    --background: 240 10% 15%; /* bg */
+    --background-start-rgb: 20 10% 5%;
+    --background-end-rgb: 240 10% 15%;
+    --background: hsla(var(--background-start-rgb), 0.8);
     --foreground: 240 8% 80%; /* fg */
 
-    --card: 240 9% 17%; /* bg_highlight */
+    --card-background-rgb: 240 9% 17%;
+    --card: hsla(var(--card-background-rgb), 0.5); /* bg_highlight */
     --card-foreground: 240 8% 80%; /* fg */
 
-    --popover: 240 10% 15%; /* bg */
+    --popover: hsla(var(--background-start-rgb), 0.7); /* bg */
     --popover-foreground: 240 8% 80%; /* fg */
 
     --primary: 198 93% 66%; /* blue */
     --primary-foreground: 240 10% 15%; /* bg */
 
-    --secondary: 240 9% 20%; /* terminal_black */
+    --secondary-background-rgb: 240 9% 20%;
+    --secondary: hsla(var(--secondary-background-rgb), 0.3);
     --secondary-foreground: 240 8% 80%; /* fg */
 
-    --muted: 240 9% 20%;
+    --muted: hsla(240, 9%, 20%, 0.5);
     --muted-foreground: 240 5% 65%; /* fg_dark */
 
     --accent: 275 67% 76%; /* magenta */
@@ -51,8 +67,8 @@
     --destructive: 350 79% 64%; /* red */
     --destructive-foreground: 240 10% 15%; /* bg */
 
-    --border: 240 7% 25%;
-    --input: 240 7% 25%;
+    --border: hsla(240, 7%, 25%, 0.3);
+    --input: hsla(240, 7%, 25%, 0.3);
     --ring: 198 93% 66%; /* blue */
   }
 }
@@ -63,5 +79,12 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image: linear-gradient(to bottom right, hsl(var(--background-start-rgb)), hsl(var(--background-end-rgb)));
+  }
+}
+
+@layer components {
+  .frosted-glass {
+    @apply bg-card border backdrop-blur-lg;
   }
 }

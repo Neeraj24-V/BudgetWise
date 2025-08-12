@@ -33,7 +33,6 @@ export default function Home() {
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      // Hero animation remains on load
       gsap.from(".hero-element", {
         opacity: 0,
         y: 20,
@@ -45,11 +44,11 @@ export default function Home() {
       const cards = gsap.utils.toArray('.feature-card');
       cards.forEach((card, index) => {
         let animationProps = {};
-        if (index === 0) { // Left card
+        if (index === 0) { 
           animationProps = { x: -100 };
-        } else if (index === 1) { // Middle card
+        } else if (index === 1) { 
           animationProps = { y: 100 };
-        } else { // Right card
+        } else { 
           animationProps = { x: 100 };
         }
         
@@ -100,25 +99,25 @@ export default function Home() {
 
   const features = [
     {
-      icon: <ListChecks className="h-8 w-8 text-white" />,
+      icon: <ListChecks className="h-8 w-8 text-primary-foreground" />,
       title: "Track Expenses Effortlessly",
       description: "Easily log your daily expenses and categorize them to see where your money is going. Stay on top of your spending with minimal effort.",
     },
     {
-      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2a2 2 0 0 0 2-2c0-1.1-.9-2-2-2Z"/></svg>,
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2a2 2 0 0 0 2-2c0-1.1-.9-2-2-2Z"/></svg>,
       title: "Smart Budgeting",
       description: "Create custom budgets for different categories and get notified when you're approaching your limits. Plan your finances and save more effectively.",
     },
     {
-      icon: <BarChart3 className="h-8 w-8 text-white" />,
+      icon: <BarChart3 className="h-8 w-8 text-primary-foreground" />,
       title: "Visualize Your Spending",
       description: "Get a clear picture of your financial habits with insightful charts and reports. Understand your spending patterns to make smarter decisions.",
     },
   ];
 
   return (
-    <div ref={root} className="min-h-screen bg-background text-foreground overflow-x-hidden">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div ref={root} className="min-h-screen text-foreground overflow-x-hidden">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-lg">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-14 items-center">
           <a href="/" className="flex items-center space-x-2">
             <FinFlowLogo className="h-6 w-6 text-primary" />
@@ -144,7 +143,7 @@ export default function Home() {
       <main>
         {/* Hero Section */}
         <section className="py-24 sm:py-32 relative isolate overflow-hidden">
-          <div className="absolute inset-0 -z-10 bg-background [background:radial-gradient(50%_50%_at_50%_50%,hsl(var(--primary)/0.1),hsl(var(--background)))]"></div>
+          <div className="absolute inset-0 -z-10 bg-transparent"></div>
           <CurrencyFall />
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 hero-element">
@@ -165,7 +164,7 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-20 md:py-32 bg-secondary">
+        <section id="features" className="py-20 md:py-32">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">
@@ -177,8 +176,8 @@ export default function Home() {
             </div>
             <div className="grid md:grid-cols-3 gap-8">
               {features.map((feature, index) => (
-                <div key={index} className="bg-card p-8 rounded-lg shadow-md feature-card">
-                  <div className="bg-primary rounded-full w-16 h-16 flex items-center justify-center mb-6">
+                <div key={index} className="frosted-glass p-8 rounded-lg shadow-lg feature-card">
+                  <div className="bg-primary/80 rounded-full w-16 h-16 flex items-center justify-center mb-6">
                     {feature.icon}
                   </div>
                   <h3 className="text-2xl font-bold mb-3">{feature.title}</h3>
@@ -190,7 +189,7 @@ export default function Home() {
         </section>
 
         {/* How it Works Section */}
-        <section className="py-20 md:py-32 how-it-works-section bg-background">
+        <section className="py-20 md:py-32 how-it-works-section">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">
@@ -201,23 +200,23 @@ export default function Home() {
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-8 text-center">
-              <div className="how-it-works-card p-4">
+              <div className="how-it-works-card frosted-glass p-6 rounded-lg">
                 <div className="flex justify-center items-center mb-4">
-                  <div className="bg-primary text-primary-foreground rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold">1</div>
+                  <div className="bg-primary/80 text-primary-foreground rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold">1</div>
                 </div>
                 <h3 className="text-xl font-bold mb-2">Create Your Budget</h3>
                 <p className="text-muted-foreground">Set up your monthly and category budgets to stay on track.</p>
               </div>
-              <div className="how-it-works-card p-4">
+              <div className="how-it-works-card frosted-glass p-6 rounded-lg">
                 <div className="flex justify-center items-center mb-4">
-                  <div className="bg-primary text-primary-foreground rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold">2</div>
+                  <div className="bg-primary/80 text-primary-foreground rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold">2</div>
                 </div>
                 <h3 className="text-xl font-bold mb-2">Log Your Expenses</h3>
                 <p className="text-muted-foreground">Easily add expenses as they happen with our simple interface.</p>
               </div>
-              <div className="how-it-works-card p-4">
+              <div className="how-it-works-card frosted-glass p-6 rounded-lg">
                 <div className="flex justify-center items-center mb-4">
-                  <div className="bg-primary text-primary-foreground rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold">3</div>
+                  <div className="bg-primary/80 text-primary-foreground rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold">3</div>
                 </div>
                 <h3 className="text-xl font-bold mb-2">See Your Progress</h3>
                 <p className="text-muted-foreground">Visualize your spending with charts and reports to make informed decisions.</p>
@@ -227,7 +226,7 @@ export default function Home() {
         </section>
 
         {/* Bento Box Section */}
-        <section className="py-20 md:py-32 bg-secondary">
+        <section className="py-20 md:py-32">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">Your Financial Command Center</h2>
@@ -236,22 +235,22 @@ export default function Home() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 grid-rows-2 gap-6 bento-grid">
-              <div className="md:col-span-2 p-8 bg-card rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
+              <div className="md:col-span-2 p-8 frosted-glass rounded-lg shadow-lg flex flex-col justify-center items-center text-center bento-item">
                   <BarChart3 className="h-12 w-12 text-primary mb-4" />
                   <h3 className="text-2xl font-bold mb-2">Interactive Dashboard</h3>
                   <p className="text-muted-foreground">A crystal-clear overview of your financial health at a glance. Track everything from one central hub.</p>
               </div>
-              <div className="p-8 bg-card rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
+              <div className="p-8 frosted-glass rounded-lg shadow-lg flex flex-col justify-center items-center text-center bento-item">
                   <Siren className="h-12 w-12 text-primary mb-4" />
                   <h3 className="text-2xl font-bold mb-2">Smart Alerts</h3>
                   <p className="text-muted-foreground">Get notified before you overspend.</p>
               </div>
-              <div className="p-8 bg-card rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
+              <div className="p-8 frosted-glass rounded-lg shadow-lg flex flex-col justify-center items-center text-center bento-item">
                   <Cpu className="h-12 w-12 text-primary mb-4" />
                   <h3 className="text-2xl font-bold mb-2">AI Insights</h3>
                   <p className="text-muted-foreground">Receive personalized tips to save more.</p>
               </div>
-              <div className="md:col-span-2 p-8 bg-card rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
+              <div className="md:col-span-2 p-8 frosted-glass rounded-lg shadow-lg flex flex-col justify-center items-center text-center bento-item">
                   <Smartphone className="h-12 w-12 text-primary mb-4" />
                   <h3 className="text-2xl font-bold mb-2">Multi-Device Sync</h3>
                   <p className="text-muted-foreground">Access your financial data on your phone, tablet, or desktop. Always in sync, always up-to-date.</p>
@@ -263,7 +262,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="py-8 bg-background">
+      <footer className="py-8 bg-transparent">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-muted-foreground">
               <p>&copy; {new Date().getFullYear()} FinFlow. All rights reserved.</p>
           </div>
