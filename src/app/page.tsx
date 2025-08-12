@@ -1,7 +1,7 @@
 
 "use client";
 
-import { BarChart3, ListChecks } from "lucide-react";
+import { BarChart3, ListChecks, Smartphone, ShieldCheck, Siren, Cpu } from "lucide-react";
 import { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -62,6 +62,32 @@ export default function Home() {
           }
         });
       });
+
+      gsap.from(".how-it-works-card", {
+        opacity: 0,
+        y: 50,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".how-it-works-section",
+          start: "top 80%",
+        }
+      });
+      
+      gsap.from(".bento-item", {
+        opacity: 0,
+        scale: 0.95,
+        y: 20,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".bento-grid",
+          start: "top 80%",
+        }
+      });
+
     }, root);
 
     return () => ctx.revert();
@@ -149,12 +175,83 @@ export default function Home() {
                   </div>
                   <h3 className="text-2xl font-bold mb-3">{feature.title}</h3>
                   <p className="text-muted-foreground">{feature.description}</p>
-
                 </div>
               ))}
             </div>
           </div>
         </section>
+
+        {/* How it Works Section */}
+        <section className="py-20 md:py-32 how-it-works-section">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold">
+                Get Started in 3 Easy Steps
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
+                Start managing your finances with FinFlow in just a few minutes.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8 text-center">
+              <div className="how-it-works-card">
+                <div className="flex justify-center items-center mb-4">
+                  <div className="bg-primary text-primary-foreground rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold">1</div>
+                </div>
+                <h3 className="text-xl font-bold mb-2">Create Your Budget</h3>
+                <p className="text-muted-foreground">Set up your monthly and category budgets to stay on track.</p>
+              </div>
+              <div className="how-it-works-card">
+                <div className="flex justify-center items-center mb-4">
+                  <div className="bg-primary text-primary-foreground rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold">2</div>
+                </div>
+                <h3 className="text-xl font-bold mb-2">Log Your Expenses</h3>
+                <p className="text-muted-foreground">Easily add expenses as they happen with our simple interface.</p>
+              </div>
+              <div className="how-it-works-card">
+                <div className="flex justify-center items-center mb-4">
+                  <div className="bg-primary text-primary-foreground rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold">3</div>
+                </div>
+                <h3 className="text-xl font-bold mb-2">See Your Progress</h3>
+                <p className="text-muted-foreground">Visualize your spending with charts and reports to make informed decisions.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Bento Box Section */}
+        <section className="py-20 md:py-32 bg-secondary">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold">Your Financial Command Center</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
+                All the tools you need, beautifully organized in one place.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 grid-rows-2 gap-6 bento-grid">
+              <div className="md:col-span-2 p-8 bg-card rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
+                  <BarChart3 className="h-12 w-12 text-primary mb-4" />
+                  <h3 className="text-2xl font-bold mb-2">Interactive Dashboard</h3>
+                  <p className="text-muted-foreground">A crystal-clear overview of your financial health at a glance. Track everything from one central hub.</p>
+              </div>
+              <div className="p-8 bg-card rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
+                  <Siren className="h-12 w-12 text-primary mb-4" />
+                  <h3 className="text-2xl font-bold mb-2">Smart Alerts</h3>
+                  <p className="text-muted-foreground">Get notified before you overspend.</p>
+              </div>
+              <div className="p-8 bg-card rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
+                  <Cpu className="h-12 w-12 text-primary mb-4" />
+                  <h3 className="text-2xl font-bold mb-2">AI Insights</h3>
+                  <p className="text-muted-foreground">Receive personalized tips to save more.</p>
+              </div>
+              <div className="md:col-span-2 p-8 bg-card rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
+                  <Smartphone className="h-12 w-12 text-primary mb-4" />
+                  <h3 className="text-2xl font-bold mb-2">Multi-Device Sync</h3>
+                  <p className="text-muted-foreground">Access your financial data on your phone, tablet, or desktop. Always in sync, always up-to-date.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </main>
 
       {/* Footer */}
