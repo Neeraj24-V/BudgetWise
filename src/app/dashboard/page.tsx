@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, ReactElement } from 'react';
+import { useState, useEffect, ReactElement, useContext } from 'react';
 import { Bot, Send, User, Target, PiggyBank, Briefcase, Car, GraduationCap, Sparkles, DollarSign, Wallet, Group, Settings, X, PlusCircle, Utensils, Bus, Film, ShoppingBag, TrendingUp, ArrowRight, Home, Shirt } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, CartesianGrid } from 'recharts';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CurrencyContext } from '@/context/currency-context';
 
 
 interface Message {
@@ -330,14 +331,14 @@ function AddCategoryModal({ isOpen, onOpenChange, onCategoryAdded }: { isOpen: b
 }
 
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label, currencySymbol }: any) => {
   if (active && payload && payload.length) {
     const value = payload[0].value;
     const name = payload[0].payload.name || label;
     return (
       <div className="p-2 text-xs rounded-lg shadow-md bg-background border">
         <p className="font-bold text-foreground">{`${name}`}</p>
-        <p className="text-muted-foreground">{`Spent: $${value.toFixed(2)}`}</p>
+        <p className="text-muted-foreground">{`Spent: ${currencySymbol}${value.toFixed(2)}`}</p>
       </div>
     );
   }
@@ -357,6 +358,8 @@ export default function DashboardPage() {
   const [dynamicWeeklyData, setDynamicWeeklyData] = useState(weeklyData);
   const [dynamicMonthlyData, setDynamicMonthlyData] = useState(monthlyData);
   
+  const { currencySymbol } = useContext(CurrencyContext);
+
   const fetchData = async () => {
     try {
       const budgetsRes = await fetch('/api/budgets');
@@ -414,7 +417,7 @@ export default function DashboardPage() {
                   </TabsList>
                   <div className="space-y-1 text-right">
                     <p className="text-sm text-muted-foreground">Total Spent (This Month)</p>
-                    <p className="text-2xl font-bold">${totalSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    <p className="text-2xl font-bold">{currencySymbol}{totalSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                   </div>
               </div>
               <TabsContent value="weekly">
@@ -428,9 +431,9 @@ export default function DashboardPage() {
                                 </linearGradient>
                                </defs>
                               <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
+                              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${currencySymbol}${value}`} />
                               <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
-                              <Tooltip content={<CustomTooltip />} cursor={{fill: 'hsl(var(--primary) / 0.1)'}} />
+                              <Tooltip content={<CustomTooltip currencySymbol={currencySymbol} />} cursor={{fill: 'hsl(var(--primary) / 0.1)'}} />
                               <Area type="monotone" dataKey="total" stroke="hsl(var(--primary))" fill="url(#colorTotal)" />
                           </AreaChart>
                       </ResponsiveContainer>
@@ -441,8 +444,8 @@ export default function DashboardPage() {
                        <ResponsiveContainer width="100%" height="100%">
                           <BarChart data={dynamicMonthlyData}>
                               <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
-                              <Tooltip content={<CustomTooltip />} cursor={{fill: 'hsl(var(--primary) / 0.1)'}} />
+                              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${currencySymbol}${value}`} />
+                              <Tooltip content={<CustomTooltip currencySymbol={currencySymbol} />} cursor={{fill: 'hsl(var(--primary) / 0.1)'}} />
                               <Bar dataKey="total" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                           </BarChart>
                       </ResponsiveContainer>
@@ -465,7 +468,7 @@ export default function DashboardPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">You've spent $430.50 on Groceries this month.</p>
+                  <p className="text-muted-foreground">You've spent {currencySymbol}430.50 on Groceries this month.</p>
                 </CardContent>
               </Card>
               <Card>
@@ -501,15 +504,15 @@ export default function DashboardPage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                         <div>
                             <p className="text-muted-foreground text-sm">Total Budget</p>
-                            <p className="text-2xl font-bold">${totalBudget.toLocaleString()}</p>
+                            <p className="text-2xl font-bold">{currencySymbol}{totalBudget.toLocaleString()}</p>
                         </div>
                         <div>
                             <p className="text-muted-foreground text-sm">Spent</p>
-                            <p className="text-2xl font-bold text-destructive">${totalSpent.toLocaleString()}</p>
+                            <p className="text-2xl font-bold text-destructive">{currencySymbol}{totalSpent.toLocaleString()}</p>
                         </div>
                         <div>
                             <p className="text-muted-foreground text-sm">Remaining</p>
-                            <p className="text-2xl font-bold text-green-500">${(totalBudget - totalSpent).toLocaleString()}</p>
+                            <p className="text-2xl font-bold text-green-500">{currencySymbol}{(totalBudget - totalSpent).toLocaleString()}</p>
                         </div>
                     </div>
                     <Progress value={(totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0)} className="mt-4" />
@@ -526,7 +529,7 @@ export default function DashboardPage() {
                                 </div>
                                 <div>
                                     <CardTitle className="text-xl">{category.name}</CardTitle>
-                                    <CardDescription>${category.spent.toLocaleString()} of ${category.budget.toLocaleString()}</CardDescription>
+                                    <CardDescription>{currencySymbol}{category.spent.toLocaleString()} of {currencySymbol}{category.budget.toLocaleString()}</CardDescription>
                                 </div>
                             </div>
                             <Button size="sm" variant="outline" onClick={() => handleAddExpenseClick(category.name)}>
@@ -540,7 +543,7 @@ export default function DashboardPage() {
                                 {transactionHistory.filter(tx => tx.category === category.name).slice(0, 3).map(tx => (
                                     <li key={tx._id} className="flex justify-between items-center">
                                         <span>{tx.name}</span>
-                                        <span className="font-medium">${tx.amount.toFixed(2)}</span>
+                                        <span className="font-medium">{currencySymbol}{tx.amount.toFixed(2)}</span>
                                     </li>
                                 ))}
                             </ul>
@@ -565,9 +568,9 @@ export default function DashboardPage() {
                   <CardContent className="h-[250px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={categorySpendingData} layout="vertical" margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                        <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
+                        <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${currencySymbol}${value}`} />
                         <YAxis type="category" dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} width={80} />
-                        <Tooltip content={<CustomTooltip />} cursor={{fill: 'hsl(var(--primary) / 0.1)'}} />
+                        <Tooltip content={<CustomTooltip currencySymbol={currencySymbol} />} cursor={{fill: 'hsl(var(--primary) / 0.1)'}} />
                         <Bar dataKey="spent" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
@@ -594,7 +597,7 @@ export default function DashboardPage() {
                             <TableCell>{item.name}</TableCell>
                             <TableCell>{item.category}</TableCell>
                             <TableCell>{new Date(item.date).toLocaleDateString()}</TableCell>
-                            <TableCell className="text-right">${item.amount.toFixed(2)}</TableCell>
+                            <TableCell className="text-right">{currencySymbol}{item.amount.toFixed(2)}</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -617,7 +620,7 @@ export default function DashboardPage() {
                             <p className="font-medium">{bill.name}</p>
                             <p className="text-sm text-muted-foreground">{bill.date}</p>
                           </div>
-                          <p className="font-bold text-right">${bill.amount.toFixed(2)}</p>
+                          <p className="font-bold text-right">{currencySymbol}{bill.amount.toFixed(2)}</p>
                         </li>
                       ))}
                     </ul>
@@ -630,7 +633,7 @@ export default function DashboardPage() {
                   <CardContent className="flex items-center justify-between">
                     <div className="flex items-center">
                         <Wallet className="w-8 h-8 mr-4 text-primary"/>
-                        <p className="text-3xl font-bold">$12,345.67</p>
+                        <p className="text-3xl font-bold">{currencySymbol}12,345.67</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -673,4 +676,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

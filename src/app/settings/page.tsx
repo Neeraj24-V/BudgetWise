@@ -1,10 +1,18 @@
+
+"use client";
+
+import { useContext } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CurrencyContext, Currency } from '@/context/currency-context';
 
 export default function SettingsPage() {
+    const { currency, setCurrency } = useContext(CurrencyContext);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <main className="container mx-auto p-4 sm:p-6 lg:p-8 max-w-2xl">
@@ -47,6 +55,26 @@ export default function SettingsPage() {
             <CardContent className="flex items-center justify-between">
                 <p>Toggle light or dark mode.</p>
                 <ThemeToggle />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Currency</CardTitle>
+              <CardDescription>Select your preferred currency.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Select onValueChange={(value) => setCurrency(value as Currency)} value={currency}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select a currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="USD">USD ($)</SelectItem>
+                        <SelectItem value="EUR">EUR (€)</SelectItem>
+                        <SelectItem value="GBP">GBP (£)</SelectItem>
+                        <SelectItem value="JPY">JPY (¥)</SelectItem>
+                    </SelectContent>
+                </Select>
             </CardContent>
           </Card>
 
