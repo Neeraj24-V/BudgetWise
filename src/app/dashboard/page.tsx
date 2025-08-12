@@ -199,7 +199,9 @@ function AddExpenseModal({ categoryName, isOpen, onOpenChange }: { categoryName:
           <DialogClose asChild>
             <Button type="button" variant="secondary">Cancel</Button>
           </DialogClose>
-          <Button type="submit">Add Expense</Button>
+          <DialogClose asChild>
+            <Button type="submit">Add Expense</Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
