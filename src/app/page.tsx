@@ -1,13 +1,14 @@
 
 "use client";
 
-import { BarChart3, ListChecks, Smartphone, ShieldCheck, Siren, Cpu } from "lucide-react";
+import { BarChart3, ListChecks, Smartphone, ShieldCheck, Siren, Cpu, Moon, Sun } from "lucide-react";
 import { useLayoutEffect, useRef } from 'react';
+import { useTheme } from "next-themes";
 import { gsap } from 'gsap';
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
-  
+
 const FinFlowLogo = ({ className }: {className?: string}) => (
     <svg
       role="img"
@@ -25,6 +26,22 @@ const FinFlowLogo = ({ className }: {className?: string}) => (
         ></path>
     </svg>
 );
+
+
+function ThemeToggle() {
+  const { setTheme, theme } = useTheme();
+
+  return (
+    <button
+      className="p-2 rounded-md hover:bg-secondary"
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      aria-label="Toggle theme"
+    >
+      <Sun className="h-5 w-5 dark:hidden" />
+      <Moon className="h-5 w-5 hidden dark:block" />
+    </button>
+  );
+}
 
 
 export default function Home() {
@@ -123,8 +140,8 @@ export default function Home() {
             <FinFlowLogo className="h-6 w-6 text-primary" />
             <span className="font-bold inline-block">FinFlow</span>
           </a>
-          <div className="flex flex-1 items-center justify-end space-x-4">
-            <nav className="flex items-center space-x-2">
+          <div className="flex flex-1 items-center justify-end space-x-2">
+            <nav className="hidden md:flex items-center space-x-2">
               <a href="/dashboard" className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-primary">
                 Dashboard
               </a>
@@ -135,6 +152,7 @@ export default function Home() {
                 Register
               </a>
             </nav>
+            <ThemeToggle />
           </div>
         </div>
       </header>
