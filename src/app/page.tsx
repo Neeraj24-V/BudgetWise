@@ -67,6 +67,28 @@ export default function Home() {
 
   return (
     <div ref={root} className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto px-4 flex h-14 items-center">
+          <a href="/" className="flex items-center space-x-2">
+            <PiggyBank className="h-6 w-6 text-primary" />
+            <span className="font-bold inline-block">ExpenseTracker</span>
+          </a>
+          <div className="flex flex-1 items-center justify-end space-x-4">
+            <nav className="flex items-center space-x-2">
+              <a href="/dashboard" className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-primary">
+                Dashboard
+              </a>
+              <a href="/login" className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-primary">
+                Login
+              </a>
+              <a href="/register" className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md text-sm font-medium">
+                Register
+              </a>
+            </nav>
+          </div>
+        </div>
+      </header>
+
       <main>
         {/* Hero Section */}
         <section className="py-20 md:py-32">
