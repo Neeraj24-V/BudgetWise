@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from '@/lib/utils';
 import { Settings } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const BudgetWiseLogo = ({ className }: {className?: string}) => (
     <svg
@@ -31,7 +32,7 @@ export function Header() {
                 <BudgetWiseLogo className="h-6 w-6 text-primary" />
                 <span className="font-bold inline-block">BudgetWise</span>
             </a>
-            <div className="flex flex-1 items-center justify-end space-x-2">
+            <div className="flex flex-1 items-center justify-end space-x-4">
                 <nav className="hidden md:flex items-center space-x-2">
                     {isHomePage ? (
                         <>
@@ -57,6 +58,12 @@ export function Header() {
                     )}
                 </nav>
                 <ThemeToggle />
+                {!isHomePage && (
+                    <Avatar className="h-9 w-9">
+                      <AvatarImage src="https://placehold.co/100x100.png" alt="User profile picture" data-ai-hint="person portrait" />
+                      <AvatarFallback>JD</AvatarFallback>
+                    </Avatar>
+                )}
             </div>
         </div>
     </header>
