@@ -32,6 +32,8 @@
     --border: 240 7% 25%;
     --input: 240 7% 25%;
     --ring: 198 93% 66%; /* blue */
+
+    --radius: 0.5rem;
   }
 
   .theme-solarized-osaka {
