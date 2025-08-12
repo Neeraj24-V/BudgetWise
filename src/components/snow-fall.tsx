@@ -19,7 +19,7 @@ export function Snowfall() {
       const flake = document.createElement('div');
       flake.className = 'snowflake';
       flake.style.position = 'absolute';
-      flake.style.backgroundColor = 'hsl(var(--primary))';
+      flake.style.backgroundColor = 'white';
       flake.style.borderRadius = '50%';
       flake.style.opacity = '0';
       container.appendChild(flake);
