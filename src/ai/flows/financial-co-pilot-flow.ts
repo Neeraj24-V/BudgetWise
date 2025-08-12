@@ -43,10 +43,20 @@ export async function financialCoPilotFlow(input: FinancialCoPilotInput): Promis
         If you don't know the answer, say that you don't know.`,
     });
 
-    return llmResponse.text() || 'Sorry, I had a problem responding.';
-  } catch(e) {
+    const responseText = llmResponse.text();
+
+    if (!responseText) {
+      console.error("AI response was empty or invalid.");
+      // Throw an error that the client can catch
+      throw new Error("I'm sorry, I received an empty response from the AI. Please try again.");
+    }
+
+    return responseText;
+    
+  } catch(e: any) {
     console.error("Error in financialCoPilotFlow:", e);
-    // Provide a more specific error message if possible, but keep it simple for the user.
-    return 'Sorry, there was an error processing your request on the server. Please try again later.';
+    // Re-throw the error with a user-friendly message so the client-side can handle it.
+    // This allows the UI to show a proper error state.
+    throw new Error(`Sorry, there was an error processing your request on the server. Details: ${e.message}`);
   }
 }
