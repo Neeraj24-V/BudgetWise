@@ -38,5 +38,5 @@ const financialCoPilotPrompt = ai.definePrompt(
 
 export async function financialCoPilotFlow(input: FinancialCoPilotInput): Promise<string> {
   const llmResponse = await financialCoPilotPrompt(input);
-  return llmResponse.output() || 'Sorry, I had a problem responding.';
+  return llmResponse.text || 'Sorry, I had a problem responding.';
 }
