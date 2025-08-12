@@ -16,6 +16,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, A
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CurrencyContext } from '@/context/currency-context';
+import { financialCoPilotFlow, FinancialCoPilotInput } from '@/ai/flows/financial-co-pilot-flow';
 
 
 interface Message {
@@ -59,18 +60,53 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
     { id: '1', text: "Hello! I'm your AI Financial Co-Pilot. How can I help you today?", isUser: false },
   ]);
   const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (input.trim() === '') return;
+    setIsLoading(true);
 
-    const newMessage: Message = {
+    const userMessage: Message = {
       id: (messages.length + 1).toString(),
       text: input,
       isUser: true,
     };
-    setMessages([...messages, newMessage]);
+    setMessages(prev => [...prev, userMessage]);
+    
+    const currentInput = input;
     setInput('');
-    // TODO: Add backend call to get AI response
+
+    try {
+      const historyForAI = messages.map(m => ({
+        role: m.isUser ? 'user' : 'model',
+        content: [{ text: m.text }],
+      }));
+
+      const flowInput: FinancialCoPilotInput = {
+        history: historyForAI,
+        message: currentInput,
+      };
+
+      const aiResponseText = await financialCoPilotFlow(flowInput);
+
+      const aiMessage: Message = {
+        id: (messages.length + 2).toString(),
+        text: aiResponseText,
+        isUser: false,
+      };
+      setMessages(prev => [...prev, aiMessage]);
+
+    } catch (error) {
+      console.error("AI flow error:", error);
+      const errorMessage: Message = {
+        id: (messages.length + 2).toString(),
+        text: "Sorry, I'm having trouble connecting to my brain right now. Please try again later.",
+        isUser: false,
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+        setIsLoading(false);
+    }
   };
 
   return (
@@ -122,6 +158,18 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
               )}
             </div>
           ))}
+           {isLoading && (
+            <div className="flex items-start gap-4">
+              <Avatar className="h-8 w-8 border">
+                <AvatarFallback><Bot className="w-5 h-5" /></AvatarFallback>
+              </Avatar>
+              <div className="max-w-[75%] p-3 rounded-lg bg-muted flex items-center space-x-2">
+                <div className="w-2 h-2 rounded-full bg-foreground/50 animate-bounce [animation-delay:-0.3s]"></div>
+                <div className="w-2 h-2 rounded-full bg-foreground/50 animate-bounce [animation-delay:-0.15s]"></div>
+                <div className="w-2 h-2 rounded-full bg-foreground/50 animate-bounce"></div>
+              </div>
+            </div>
+          )}
         </div>
       </CardContent>
       <div className="border-t bg-background p-4">
@@ -132,8 +180,9 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Ask about your finances..."
             className="flex-1"
+            disabled={isLoading}
           />
-          <Button onClick={handleSend} size="icon">
+          <Button onClick={handleSend} size="icon" disabled={isLoading}>
             <Send className="h-5 w-5" />
             <span className="sr-only">Send</span>
           </Button>
