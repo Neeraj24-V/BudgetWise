@@ -9,7 +9,10 @@ if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !proce
     throw new Error('Missing Google OAuth or NextAuth secret environment variables. Please check your .env file.');
 }
 
+const clientPromise = connectToDatabase().then(conn => conn.client);
+
 export const authOptions: AuthOptions = {
+  adapter: MongoDBAdapter(clientPromise),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -18,16 +21,18 @@ export const authOptions: AuthOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET,
   session: {
-    strategy: "jwt",
+    strategy: "database", // Use database strategy with an adapter
   },
   pages: {
     signIn: '/login',
+    error: '/login', // Redirect to login on error
   },
   callbacks: {
-    async session({ session, token }) {
-      // Add custom fields to the session object from the token
-      if (session.user && token.sub) {
-        (session.user as any).id = token.sub;
+    async session({ session, user }) {
+      // The user object here is the one from the database
+      if (session.user && user) {
+        (session.user as any).id = user.id;
+        (session.user as any).currency = (user as any).currency; // Pass currency to session
       }
       return session;
     },
