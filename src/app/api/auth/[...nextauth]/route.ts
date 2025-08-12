@@ -6,7 +6,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.NEXTAUTH_SECRET) {
-    throw new Error('Missing Google OAuth or NextAuth secret environment variables');
+    throw new Error('Missing Google OAuth or NextAuth secret environment variables. Please check your .env file.');
 }
 
 const clientPromise = connectToDatabase().then(connection => connection.client);
