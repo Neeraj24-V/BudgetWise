@@ -8,6 +8,7 @@ if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !proce
 }
 
 const authOptions = {
+  // The adapter expects a promise that resolves to a MongoClient instance
   adapter: MongoDBAdapter(connectToDatabase().then(c => c.client)),
   providers: [
     GoogleProvider({
@@ -28,7 +29,7 @@ const authOptions = {
     },
   },
   pages: {
-    signIn: '/login', // Redirect to a custom login page if you want
+    signIn: '/login',
   },
 };
 

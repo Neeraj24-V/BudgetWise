@@ -9,20 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Button } from './ui/button';
 import Link from 'next/link';
+import { BudgetWiseLogo } from './logo';
 
-const BudgetWiseLogo = ({ className }: {className?: string}) => (
-    <svg
-      role="img"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-        <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-);
 
 export function Header() {
   const { data: session, status } = useSession();
@@ -55,11 +43,11 @@ export function Header() {
                        </>
                     ) : (
                         <>
-                            <Button variant="ghost" onClick={() => signIn('google', { callbackUrl: '/dashboard'})}>
+                            <Button variant="ghost" onClick={() => signIn('google')}>
                                 <LogIn className="w-4 h-4 mr-2" />
                                 Login
                             </Button>
-                            <Button onClick={() => signIn('google', { callbackUrl: '/dashboard'})}>
+                            <Button onClick={() => signIn('google')}>
                                 Register
                             </Button>
                         </>
