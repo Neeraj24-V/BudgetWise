@@ -6,7 +6,7 @@ import { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ThemeToggle } from "@/components/theme-toggle";
-import Image from "next/image";
+import { CurrencyFall } from "@/components/currency-fall";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -145,7 +145,8 @@ export default function Home() {
         {/* Hero Section */}
         <section className="py-20 md:py-32 relative isolate overflow-hidden">
           <div className="absolute inset-0 -z-10 bg-background [background:radial-gradient(50%_50%_at_50%_50%,hsl(var(--primary)/0.1),hsl(var(--background)))]"></div>
-          <div className="container mx-auto px-4 text-center">
+          <CurrencyFall />
+          <div className="container mx-auto px-4 text-center relative z-10">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 hero-element">
               Take Control of Your Finances
             </h1>
