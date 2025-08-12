@@ -8,7 +8,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CurrencyFall } from "@/components/currency-fall";
 import { Snowfall } from "@/components/snow-fall";
-import { Tubelight } from "@/components/tubelight";
 import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -153,9 +152,6 @@ export default function Home() {
              <Snowfall />
           </div>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-            <div className="dark-mode-hidden">
-              <Tubelight />
-            </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 hero-element">
               Take Control of Your Finances
             </h1>
