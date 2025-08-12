@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, CartesianGrid } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, CartesianGrid, PieChart, Pie, Cell, Legend } from 'recharts';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CurrencyContext } from '@/context/currency-context';
@@ -325,6 +325,9 @@ const CustomTooltip = ({ active, payload, label, currencySymbol }: any) => {
   return null;
 };
 
+const PIE_COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#ff4d4d'];
+
+
 export default function DashboardPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] = useState(false);
@@ -411,7 +414,7 @@ export default function DashboardPage() {
   const totalBudget = Array.isArray(budgetCategories) ? budgetCategories.reduce((acc, cat) => acc + cat.budget, 0) : 0;
   const totalSpent = Array.isArray(budgetCategories) ? budgetCategories.reduce((acc, cat) => acc + cat.spent, 0) : 0;
 
-  const categorySpendingData = Array.isArray(budgetCategories) ? budgetCategories.map(c => ({ name: c.name, spent: c.spent })) : [];
+  const categorySpendingData = Array.isArray(budgetCategories) ? budgetCategories.map(c => ({ name: c.name, value: c.spent })) : [];
 
 
   const handleAddExpenseClick = (categoryName: string) => {
@@ -580,6 +583,35 @@ export default function DashboardPage() {
           <TabsContent value="spending">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               <div className="space-y-6 lg:col-span-2">
+                 <Card>
+                  <CardHeader>
+                    <CardTitle>Spending Distribution</CardTitle>
+                    <CardDescription>How your spending breaks down across categories.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="h-[300px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={categorySpendingData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          nameKey="name"
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {categorySpendingData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<CustomTooltip currencySymbol={currencySymbol} />} />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
                 <Card>
                   <CardHeader>
                     <CardTitle>Spending by Category</CardTitle>
@@ -591,11 +623,14 @@ export default function DashboardPage() {
                         <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${currencySymbol}${value}`} />
                         <YAxis type="category" dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} width={80} />
                         <Tooltip content={<CustomTooltip currencySymbol={currencySymbol} />} cursor={{fill: 'hsl(var(--primary) / 0.1)'}} />
-                        <Bar dataKey="spent" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
+                        <Bar dataKey="value" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>
+              </div>
+
+              <div className="space-y-6 lg:col-span-1">
                 <Card>
                   <CardHeader>
                     <CardTitle>Transaction History</CardTitle>
@@ -624,9 +659,6 @@ export default function DashboardPage() {
                     </Table>
                   </CardContent>
                 </Card>
-              </div>
-
-              <div className="space-y-6">
                 <Card>
                   <CardHeader>
                     <CardTitle>Smart Alerts</CardTitle>
@@ -644,17 +676,6 @@ export default function DashboardPage() {
                         </li>
                       ))}
                     </ul>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Total Balance</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex items-center justify-between">
-                    <div className="flex items-center">
-                        <Wallet className="w-8 h-8 mr-4 text-primary"/>
-                        <p className="text-3xl font-bold">{currencySymbol}12,345.67</p>
-                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -696,3 +717,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
