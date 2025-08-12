@@ -12,10 +12,12 @@ import { CurrencyContext, Currency } from '@/context/currency-context';
 
 export default function SettingsPage() {
     const { currency, setCurrency } = useContext(CurrencyContext);
-    const [name, setName] = useState('John Doe');
-    const [email, setEmail] = useState('john.doe@example.com');
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
+        setIsClient(true);
         const storedName = localStorage.getItem('userName');
         if (storedName) setName(storedName);
 
@@ -24,10 +26,16 @@ export default function SettingsPage() {
     }, []);
 
     const handleProfileUpdate = () => {
-        localStorage.setItem('userName', name);
-        localStorage.setItem('userEmail', email);
-        alert('Profile updated successfully!');
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userEmail', email);
+            alert('Profile updated successfully!');
+        }
     };
+
+    if (!isClient) {
+        return null; // or a loading spinner
+    }
 
   return (
     <div className="min-h-screen bg-background text-foreground">

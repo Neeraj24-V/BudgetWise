@@ -27,33 +27,42 @@ export const CurrencyContext = createContext<CurrencyContextType>({
 });
 
 export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
-    const [currency, setCurrency] = useState<Currency>('USD');
-    const [currencySymbol, setCurrencySymbol] = useState<CurrencySymbol>('$');
+    const [currency, setCurrencyState] = useState<Currency>('USD');
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
         setIsMounted(true);
-        const storedCurrency = localStorage.getItem('currency') as Currency | null;
-        if (storedCurrency && currencySymbols[storedCurrency]) {
-            setCurrency(storedCurrency);
-            setCurrencySymbol(currencySymbols[storedCurrency]);
+        try {
+            const storedCurrency = localStorage.getItem('currency') as Currency | null;
+            if (storedCurrency && currencySymbols[storedCurrency]) {
+                setCurrencyState(storedCurrency);
+            }
+        } catch (error) {
+            console.error("Could not access localStorage:", error);
         }
     }, []);
 
-    const handleSetCurrency = (newCurrency: Currency) => {
+    const setCurrency = (newCurrency: Currency) => {
         if (currencySymbols[newCurrency]) {
-            setCurrency(newCurrency);
-            setCurrencySymbol(currencySymbols[newCurrency]);
-            localStorage.setItem('currency', newCurrency);
+            setCurrencyState(newCurrency);
+            try {
+                localStorage.setItem('currency', newCurrency);
+            } catch (error) {
+                 console.error("Could not access localStorage:", error);
+            }
         }
     };
-
+    
+    // We need to delay rendering of the children until the client-side has mounted
+    // and we have had a chance to read the currency from localStorage.
     if (!isMounted) {
         return null;
     }
 
+    const currencySymbol = currencySymbols[currency];
+
     return (
-        <CurrencyContext.Provider value={{ currency, currencySymbol, setCurrency: handleSetCurrency }}>
+        <CurrencyContext.Provider value={{ currency, currencySymbol, setCurrency }}>
             {children}
         </CurrencyContext.Provider>
     );
