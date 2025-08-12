@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from 'react';
-import { Bot, Send, User, Target, PiggyBank, Briefcase, Car, GraduationCap, Sparkles, DollarSign, Wallet, Group, Settings, X, PlusCircle, Utensils, Bus, Film, ShoppingBag } from 'lucide-react';
+import { Bot, Send, User, Target, PiggyBank, Briefcase, Car, GraduationCap, Sparkles, DollarSign, Wallet, Group, Settings, X, PlusCircle, Utensils, Bus, Film, ShoppingBag, TrendingUp, ArrowRight } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, CartesianGrid } from 'recharts';
 import { cn } from '@/lib/utils';
 
 interface Message {
@@ -17,6 +18,25 @@ interface Message {
   text: string;
   isUser: boolean;
 }
+
+const weeklyData = [
+  { name: 'Mon', total: Math.floor(Math.random() * 100) + 20 },
+  { name: 'Tue', total: Math.floor(Math.random() * 100) + 20 },
+  { name: 'Wed', total: Math.floor(Math.random() * 100) + 20 },
+  { name: 'Thu', total: Math.floor(Math.random() * 100) + 20 },
+  { name: 'Fri', total: Math.floor(Math.random() * 100) + 20 },
+  { name: 'Sat', total: Math.floor(Math.random() * 100) + 20 },
+  { name: 'Sun', total: Math.floor(Math.random() * 100) + 20 },
+];
+
+const monthlyData = [
+  { name: 'Jan', total: Math.floor(Math.random() * 500) + 200 },
+  { name: 'Feb', total: Math.floor(Math.random() * 500) + 200 },
+  { name: 'Mar', total: Math.floor(Math.random() * 500) + 200 },
+  { name: 'Apr', total: Math.floor(Math.random() * 500) + 200 },
+  { name: 'May', total: Math.floor(Math.random() * 500) + 200 },
+  { name: 'Jun', total: Math.floor(Math.random() * 500) + 200 },
+];
 
 function ChatInterface({ onClose }: { onClose: () => void }) {
   const [messages, setMessages] = useState<Message[]>([
@@ -208,6 +228,19 @@ function AddExpenseModal({ categoryName, isOpen, onOpenChange }: { categoryName:
   );
 }
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="p-2 text-xs rounded-lg shadow-md bg-background border">
+        <p className="font-bold text-foreground">{`${label}`}</p>
+        <p className="text-muted-foreground">{`Spent: $${payload[0].value}`}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
 
 export default function DashboardPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -222,6 +255,92 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <main className="container mx-auto p-4 sm:p-6 lg:p-8">
+        <Card className="mb-6">
+          <CardHeader>
+              <CardTitle>Financial Summary</CardTitle>
+              <CardDescription>An overview of your financial health and trends.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="monthly" className="w-full">
+              <div className="flex justify-between items-start">
+                  <TabsList>
+                      <TabsTrigger value="weekly">Weekly</TabsTrigger>
+                      <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                      <TabsTrigger value="yearly">Yearly</TabsTrigger>
+                  </TabsList>
+                  <div className="space-y-1 text-right">
+                    <p className="text-sm text-muted-foreground">Total Spent (This Month)</p>
+                    <p className="text-2xl font-bold">$2,450.75</p>
+                  </div>
+              </div>
+              <TabsContent value="weekly">
+                  <div className="h-[250px] w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                          <AreaChart data={weeklyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                              <defs>
+                                <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
+                                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                                </linearGradient>
+                               </defs>
+                              <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
+                              <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+                              <Tooltip content={<CustomTooltip />} cursor={{fill: 'hsl(var(--primary) / 0.1)'}} />
+                              <Area type="monotone" dataKey="total" stroke="hsl(var(--primary))" fill="url(#colorTotal)" />
+                          </AreaChart>
+                      </ResponsiveContainer>
+                  </div>
+              </TabsContent>
+              <TabsContent value="monthly">
+                  <div className="h-[250px] w-full">
+                       <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={monthlyData}>
+                              <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
+                              <Tooltip content={<CustomTooltip />} cursor={{fill: 'hsl(var(--primary) / 0.1)'}} />
+                              <Bar dataKey="total" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                          </BarChart>
+                      </ResponsiveContainer>
+                  </div>
+              </TabsContent>
+               <TabsContent value="yearly">
+                  <div className="h-[250px] flex items-center justify-center">
+                    <p className="text-muted-foreground">Yearly chart coming soon!</p>
+                  </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+          <CardFooter className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <Card>
+                <CardHeader className="pb-2">
+                  <CardDescription>Top Spending Category</CardDescription>
+                  <CardTitle className="text-2xl flex items-center">
+                    <ShoppingBag className="w-6 h-6 mr-2 text-primary"/>
+                    Groceries
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">You've spent $430.50 on Groceries this month.</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardDescription>AI Driven Trends</CardDescription>
+                  <CardTitle className="text-2xl flex items-center">
+                    <TrendingUp className="w-6 h-6 mr-2 text-accent"/>
+                    Dining Out Up 15%
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Your spending on restaurants is trending up.
+                  <a href="#" className="text-primary hover:underline ml-1">See details <ArrowRight className="w-4 h-4 inline"/></a></p>
+                </CardContent>
+              </Card>
+          </CardFooter>
+        </Card>
+
+
         <Tabs defaultValue="budget" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="budget"><Target className="w-4 h-4 mr-2"/>Budget</TabsTrigger>
