@@ -4,6 +4,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BudgetWiseLogo } from "@/components/logo";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 
 const GoogleIcon = () => (
@@ -14,9 +15,7 @@ const GoogleIcon = () => (
 
 
 export default function LoginPage() {
-  const handleSignIn = () => {
-    alert("Login functionality is temporarily disabled. Please check back later.");
-  }
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <Card className="w-full max-w-sm">
@@ -30,14 +29,14 @@ export default function LoginPage() {
         <CardContent>
           <Button 
             className="w-full" 
-            onClick={handleSignIn}
+            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
           >
             <GoogleIcon />
             Sign in with Google
           </Button>
            <p className="mt-4 text-center text-sm text-muted-foreground">
               Don't have an account?{' '}
-              <Link href="#" onClick={(e) => {e.preventDefault(); handleSignIn()}} className="text-primary hover:underline">
+               <Link href="#" onClick={(e) => {e.preventDefault(); signIn("google", { callbackUrl: "/dashboard" })}} className="text-primary hover:underline">
                 Register
               </Link>
             </p>

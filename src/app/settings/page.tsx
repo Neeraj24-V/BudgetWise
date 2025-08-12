@@ -9,19 +9,49 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CurrencyContext, Currency } from '@/context/currency-context';
+import { useSession } from 'next-auth/react';
 
 export default function SettingsPage() {
+    const { data: session } = useSession();
     const { currency, setCurrency } = useContext(CurrencyContext);
+    
     const [name, setName] = useState('Guest User');
     const [email, setEmail] = useState('guest@example.com');
 
+    useEffect(() => {
+        if (session?.user) {
+            setName(session.user.name ?? 'Guest User');
+            setEmail(session.user.email ?? 'guest@example.com');
+        }
+    }, [session]);
+
+
     const handleProfileUpdate = () => {
-        alert('Please log in to update your profile.');
+        alert('Profile updates are handled via your Google account.');
     };
 
-    const handleCurrencyChange = (newCurrency: Currency) => {
-        setCurrency(newCurrency);
-        alert("Currency preference saved on this device.");
+    const handleCurrencyChange = async (newCurrency: Currency) => {
+        setCurrency(newCurrency); // Update context immediately for UI responsiveness
+        if (!session?.user?.id) {
+            alert("You must be logged in to save your preference.");
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/user', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ currency: newCurrency, userId: session.user.id }),
+            });
+            if (!response.ok) {
+                throw new Error("Failed to save currency preference.");
+            }
+            alert("Currency preference saved.");
+        } catch (error) {
+            console.error(error);
+            alert("Could not save your currency preference. Please try again.");
+            // Optional: revert local state if API call fails
+        }
     }
 
   return (
@@ -37,22 +67,21 @@ export default function SettingsPage() {
             <CardContent className="space-y-6">
               <div className="flex items-center space-x-6">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src={"https://placehold.co/100x100.png"} alt="User profile picture" data-ai-hint="person portrait" />
+                  <AvatarImage src={session?.user?.image ?? "https://placehold.co/100x100.png"} alt="User profile picture" data-ai-hint="person portrait" />
                   <AvatarFallback>{name?.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="space-y-2">
                     <label htmlFor="picture" className="text-sm font-medium leading-none">Profile Picture</label>
-                    <Input id="picture" type="file" className="max-w-xs" disabled />
-                    <p className="text-xs text-muted-foreground">Upload a new photo. PNG, JPG, GIF up to 10MB.</p>
+                    <p className="text-xs text-muted-foreground">Your profile picture is managed by your Google account.</p>
                 </div>
               </div>
               <div className="space-y-2">
                 <label htmlFor="name">Name</label>
-                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} disabled/>
+                <Input id="name" value={name} disabled/>
               </div>
               <div className="space-y-2">
                 <label htmlFor="email">Email</label>
-                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} disabled/>
+                <Input id="email" type="email" value={email} disabled/>
               </div>
               <Button onClick={handleProfileUpdate}>Update Profile</Button>
             </CardContent>

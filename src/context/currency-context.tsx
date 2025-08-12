@@ -2,6 +2,7 @@
 "use client";
 
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import { useSession } from 'next-auth/react';
 
 export type Currency = 'USD' | 'EUR' | 'GBP' | 'JPY' | 'INR';
 type CurrencySymbol = '$' | '€' | '£' | '¥' | '₹';
@@ -29,37 +30,22 @@ export const CurrencyContext = createContext<CurrencyContextType>({
 });
 
 export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
+    const { data: session, status } = useSession();
     const [currency, setCurrency] = useState<Currency>('USD');
-    const [isLoading, setIsLoading] = useState(true);
+    const isLoading = status === 'loading';
 
     useEffect(() => {
-        // This code now runs only on the client
-        try {
-            const savedCurrency = localStorage.getItem('currency') as Currency;
-            if (savedCurrency && currencySymbols[savedCurrency]) {
-                setCurrency(savedCurrency);
-            }
-        } catch (error) {
-            console.error("Could not access localStorage. Defaulting to USD.");
+        // @ts-ignore
+        const userCurrency = session?.user?.currency;
+        if (userCurrency && currencySymbols[userCurrency]) {
+            setCurrency(userCurrency);
         }
-        setIsLoading(false);
-    }, []);
-
-    const handleSetCurrency = (newCurrency: Currency) => {
-        if (currencySymbols[newCurrency]) {
-            setCurrency(newCurrency);
-             try {
-                localStorage.setItem('currency', newCurrency);
-            } catch (error) {
-                console.error("Could not access localStorage to save currency preference.");
-            }
-        }
-    };
+    }, [session]);
     
-    const currencySymbol = currencySymbols[currency];
+    const currencySymbol = currencySymbols[currency] || '$';
 
     return (
-        <CurrencyContext.Provider value={{ currency, currencySymbol, setCurrency: handleSetCurrency, isLoading }}>
+        <CurrencyContext.Provider value={{ currency, currencySymbol, setCurrency, isLoading }}>
             {!isLoading && children}
         </CurrencyContext.Provider>
     );
