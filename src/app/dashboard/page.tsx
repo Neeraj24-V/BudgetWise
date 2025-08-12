@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { Bot, Send, User, Target, PiggyBank, Briefcase, Car, GraduationCap, Sparkles, DollarSign, Wallet, Group, Settings } from 'lucide-react';
+import { Bot, Send, User, Target, PiggyBank, Briefcase, Car, GraduationCap, Sparkles, DollarSign, Wallet, Group, Settings, X } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,7 +17,7 @@ interface Message {
   isUser: boolean;
 }
 
-function ChatInterface() {
+function ChatInterface({ onClose }: { onClose: () => void }) {
   const [messages, setMessages] = useState<Message[]>([
     { id: '1', text: "Hello! I'm your AI Financial Co-Pilot. How can I help you today?", isUser: false },
   ]);
@@ -37,9 +37,24 @@ function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-12rem)]">
-       <div className="flex-1 overflow-y-auto p-4 md:p-6">
-        <div className="max-w-3xl mx-auto space-y-6">
+    <Card className="flex flex-col h-[60vh] w-full max-w-lg shadow-2xl">
+      <CardHeader className="flex flex-row items-center justify-between border-b">
+        <div className="flex items-center space-x-3">
+          <Avatar className="h-10 w-10 border">
+            <AvatarFallback><Bot /></AvatarFallback>
+          </Avatar>
+          <div>
+            <CardTitle>AI Financial Co-Pilot</CardTitle>
+            <CardDescription>Your personal finance assistant</CardDescription>
+          </div>
+        </div>
+        <Button variant="ghost" size="icon" onClick={onClose}>
+            <X className="h-5 w-5" />
+            <span className="sr-only">Close</span>
+        </Button>
+      </CardHeader>
+      <CardContent className="flex-1 overflow-y-auto p-4 md:p-6">
+        <div className="space-y-6">
           {messages.map((message) => (
             <div
               key={message.id}
@@ -49,33 +64,31 @@ function ChatInterface() {
               )}
             >
               {!message.isUser && (
-                <Avatar className="h-10 w-10 border">
-                  <AvatarFallback><Bot /></AvatarFallback>
+                <Avatar className="h-8 w-8 border">
+                  <AvatarFallback><Bot className="w-5 h-5"/></AvatarFallback>
                 </Avatar>
               )}
-              <Card
+              <div
                 className={cn(
-                  'max-w-[75%] p-3 rounded-lg',
+                  'max-w-[75%] p-3 rounded-lg text-sm',
                   message.isUser
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted'
                 )}
               >
-                <CardContent className="p-0 text-sm">
-                  {message.text}
-                </CardContent>
-              </Card>
+                <p>{message.text}</p>
+              </div>
               {message.isUser && (
-                <Avatar className="h-10 w-10 border">
-                  <AvatarFallback><User /></AvatarFallback>
+                <Avatar className="h-8 w-8 border">
+                  <AvatarFallback><User className="w-5 h-5"/></AvatarFallback>
                 </Avatar>
               )}
             </div>
           ))}
         </div>
-      </div>
-      <div className="border-t bg-background p-4 md:p-6">
-        <div className="max-w-3xl mx-auto flex items-center gap-4">
+      </CardContent>
+      <div className="border-t bg-background p-4">
+        <div className="flex items-center gap-4">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -89,7 +102,7 @@ function ChatInterface() {
           </Button>
         </div>
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -114,20 +127,17 @@ const categorySpending = [
 ]
 
 export default function DashboardPage() {
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <main className="container mx-auto p-4 sm:p-6 lg:p-8">
-        <Tabs defaultValue="copilot" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="copilot"><Bot className="w-4 h-4 mr-2"/>AI Co-Pilot</TabsTrigger>
+        <Tabs defaultValue="goals" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="goals"><Target className="w-4 h-4 mr-2"/>Goals</TabsTrigger>
             <TabsTrigger value="spending"><DollarSign className="w-4 h-4 mr-2"/>Spending</TabsTrigger>
             <TabsTrigger value="settings"><Settings className="w-4 h-4 mr-2"/>Settings</TabsTrigger>
           </TabsList>
-
-          <TabsContent value="copilot">
-            <ChatInterface />
-          </TabsContent>
 
           <TabsContent value="goals">
             <Card>
@@ -249,6 +259,25 @@ export default function DashboardPage() {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* Floating Chat Button */}
+      {!isChatOpen && (
+        <Button
+          onClick={() => setIsChatOpen(true)}
+          className="fixed bottom-8 right-8 h-16 w-16 rounded-full shadow-lg"
+          size="icon"
+        >
+          <Bot className="h-8 w-8" />
+          <span className="sr-only">Open Chat</span>
+        </Button>
+      )}
+
+      {/* Chat Popup */}
+      {isChatOpen && (
+        <div className="fixed bottom-8 right-8 z-50">
+          <ChatInterface onClose={() => setIsChatOpen(false)} />
+        </div>
+      )}
     </div>
   );
 }
