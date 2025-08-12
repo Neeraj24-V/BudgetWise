@@ -6,6 +6,7 @@ import { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ThemeToggle } from "@/components/theme-toggle";
+import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -142,7 +143,8 @@ export default function Home() {
 
       <main>
         {/* Hero Section */}
-        <section className="py-20 md:py-32">
+        <section className="py-20 md:py-32 relative isolate overflow-hidden">
+          <div className="absolute inset-0 -z-10 bg-background [background:radial-gradient(50%_50%_at_50%_50%,hsl(var(--primary)/0.1),hsl(var(--background)))]"></div>
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 hero-element">
               Take Control of Your Finances
@@ -162,8 +164,18 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-20 md:py-32 bg-secondary">
-          <div className="container mx-auto px-4">
+        <section id="features" className="py-20 md:py-32 relative">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="https://placehold.co/1920x1080.png"
+              alt="Financial Clarity Background"
+              fill
+              className="object-cover"
+              data-ai-hint="financial data"
+            />
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div>
+          </div>
+          <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">
                 Everything You Need for Financial Clarity
@@ -174,13 +186,12 @@ export default function Home() {
             </div>
             <div className="grid md:grid-cols-3 gap-8">
               {features.map((feature, index) => (
-                <div key={index} className="bg-card p-8 rounded-lg shadow-md feature-card">
+                <div key={index} className="bg-card/80 p-8 rounded-lg shadow-md feature-card backdrop-blur-lg">
                   <div className="bg-primary rounded-full w-16 h-16 flex items-center justify-center mb-6">
                     {feature.icon}
                   </div>
                   <h3 className="text-2xl font-bold mb-3">{feature.title}</h3>
                   <p className="text-muted-foreground">{feature.description}</p>
-
                 </div>
               ))}
             </div>
@@ -188,7 +199,7 @@ export default function Home() {
         </section>
 
         {/* How it Works Section */}
-        <section className="py-20 md:py-32 how-it-works-section">
+        <section className="py-20 md:py-32 how-it-works-section bg-secondary">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">
@@ -225,8 +236,18 @@ export default function Home() {
         </section>
 
         {/* Bento Box Section */}
-        <section className="py-20 md:py-32 bg-secondary">
-          <div className="container mx-auto px-4">
+        <section className="py-20 md:py-32 relative">
+          <div className="absolute inset-0 z-0">
+             <Image
+                src="https://placehold.co/1920x1080.png"
+                alt="Financial Command Center Background"
+                fill
+                className="object-cover"
+                data-ai-hint="futuristic command center"
+              />
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div>
+          </div>
+          <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">Your Financial Command Center</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
@@ -234,22 +255,22 @@ export default function Home() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 grid-rows-2 gap-6 bento-grid">
-              <div className="md:col-span-2 p-8 bg-card rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
+              <div className="md:col-span-2 p-8 bg-card/80 backdrop-blur-lg rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
                   <BarChart3 className="h-12 w-12 text-primary mb-4" />
                   <h3 className="text-2xl font-bold mb-2">Interactive Dashboard</h3>
                   <p className="text-muted-foreground">A crystal-clear overview of your financial health at a glance. Track everything from one central hub.</p>
               </div>
-              <div className="p-8 bg-card rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
+              <div className="p-8 bg-card/80 backdrop-blur-lg rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
                   <Siren className="h-12 w-12 text-primary mb-4" />
                   <h3 className="text-2xl font-bold mb-2">Smart Alerts</h3>
                   <p className="text-muted-foreground">Get notified before you overspend.</p>
               </div>
-              <div className="p-8 bg-card rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
+              <div className="p-8 bg-card/80 backdrop-blur-lg rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
                   <Cpu className="h-12 w-12 text-primary mb-4" />
                   <h3 className="text-2xl font-bold mb-2">AI Insights</h3>
                   <p className="text-muted-foreground">Receive personalized tips to save more.</p>
               </div>
-              <div className="md:col-span-2 p-8 bg-card rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
+              <div className="md:col-span-2 p-8 bg-card/80 backdrop-blur-lg rounded-lg shadow-md flex flex-col justify-center items-center text-center bento-item">
                   <Smartphone className="h-12 w-12 text-primary mb-4" />
                   <h3 className="text-2xl font-bold mb-2">Multi-Device Sync</h3>
                   <p className="text-muted-foreground">Access your financial data on your phone, tablet, or desktop. Always in sync, always up-to-date.</p>
