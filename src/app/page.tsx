@@ -32,6 +32,7 @@ export default function Home() {
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
+      // Hero animation remains on load
       gsap.from(".hero-element", {
         opacity: 0,
         y: 20,
@@ -44,47 +45,50 @@ export default function Home() {
       cards.forEach((card, index) => {
         let animationProps = {};
         if (index === 0) { // Left card
-          animationProps = { x: -50 };
+          animationProps = { x: -100 };
         } else if (index === 1) { // Middle card
-          animationProps = { y: 50 };
+          animationProps = { y: 100 };
         } else { // Right card
-          animationProps = { x: 50 };
+          animationProps = { x: 100 };
         }
         
         gsap.from(card as gsap.TweenTarget, {
           ...animationProps,
           opacity: 0,
-          duration: 0.8,
           ease: "power3.out",
           scrollTrigger: {
             trigger: card as gsap.TweenTarget,
             start: "top 85%",
+            end: "top 50%",
+            scrub: 1,
           }
         });
       });
 
       gsap.from(".how-it-works-card", {
         opacity: 0,
-        y: 50,
-        duration: 0.8,
-        stagger: 0.2,
+        y: 100,
+        stagger: 0.1,
         ease: "power3.out",
         scrollTrigger: {
           trigger: ".how-it-works-section",
-          start: "top 80%",
+          start: "top 70%",
+          end: "top 40%",
+          scrub: 1,
         }
       });
       
       gsap.from(".bento-item", {
         opacity: 0,
-        scale: 0.95,
-        y: 20,
-        duration: 0.6,
+        scale: 0.9,
+        y: 30,
         stagger: 0.1,
         ease: "power3.out",
         scrollTrigger: {
           trigger: ".bento-grid",
           start: "top 80%",
+          end: "top 50%",
+          scrub: 1,
         }
       });
 
