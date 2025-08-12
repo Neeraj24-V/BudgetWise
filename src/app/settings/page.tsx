@@ -9,32 +9,49 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CurrencyContext, Currency } from '@/context/currency-context';
+import { useSession } from 'next-auth/react';
 
 export default function SettingsPage() {
+    const { data: session, update: updateSession } = useSession();
     const { currency, setCurrency } = useContext(CurrencyContext);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
-        setIsClient(true);
-        const storedName = localStorage.getItem('userName');
-        if (storedName) setName(storedName);
-
-        const storedEmail = localStorage.getItem('userEmail');
-        if (storedEmail) setEmail(storedEmail);
-    }, []);
+        if (session?.user) {
+            setName(session.user.name || '');
+            setEmail(session.user.email || '');
+        }
+    }, [session]);
 
     const handleProfileUpdate = () => {
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('userName', name);
-            localStorage.setItem('userEmail', email);
-            alert('Profile updated successfully!');
-        }
+        alert('Profile update functionality coming soon!');
     };
 
-    if (!isClient) {
-        return null; // or a loading spinner
+    const handleCurrencyChange = async (newCurrency: Currency) => {
+        setCurrency(newCurrency); // Update context immediately for responsive UI
+
+        try {
+            const response = await fetch('/api/user', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ currency: newCurrency }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update currency');
+            }
+            // Manually trigger a session update to refresh the data on the client
+            await updateSession({ ...session, user: { ...session?.user, currency: newCurrency } });
+            
+        } catch (error) {
+            console.error("Error updating currency:", error);
+            // Optionally revert the change in the UI if the API call fails
+            // setCurrency(currency); // Revert to old currency
+            alert("Failed to update currency preference.");
+        }
     }
 
   return (
@@ -50,8 +67,8 @@ export default function SettingsPage() {
             <CardContent className="space-y-6">
               <div className="flex items-center space-x-6">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src="https://placehold.co/100x100.png" alt="User profile picture" data-ai-hint="person portrait" />
-                  <AvatarFallback>JD</AvatarFallback>
+                  <AvatarImage src={session?.user?.image || "https://placehold.co/100x100.png"} alt="User profile picture" data-ai-hint="person portrait" />
+                  <AvatarFallback>{name?.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="space-y-2">
                     <label htmlFor="picture" className="text-sm font-medium leading-none">Profile Picture</label>
@@ -88,7 +105,7 @@ export default function SettingsPage() {
               <CardDescription>Select your preferred currency.</CardDescription>
             </CardHeader>
             <CardContent>
-                <Select onValueChange={(value) => setCurrency(value as Currency)} value={currency}>
+                <Select onValueChange={(value) => handleCurrencyChange(value as Currency)} value={currency}>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select a currency" />
                     </SelectTrigger>

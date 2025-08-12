@@ -2,6 +2,7 @@
 "use client";
 
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import { useSession } from 'next-auth/react';
 
 export type Currency = 'USD' | 'EUR' | 'GBP' | 'JPY' | 'INR';
 type CurrencySymbol = '$' | '€' | '£' | '¥' | '₹';
@@ -10,6 +11,7 @@ interface CurrencyContextType {
     currency: Currency;
     currencySymbol: CurrencySymbol;
     setCurrency: (currency: Currency) => void;
+    isLoading: boolean;
 }
 
 const currencySymbols: { [key in Currency]: CurrencySymbol } = {
@@ -24,46 +26,35 @@ export const CurrencyContext = createContext<CurrencyContextType>({
     currency: 'USD',
     currencySymbol: '$',
     setCurrency: () => {},
+    isLoading: true,
 });
 
 export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
-    const [currency, setCurrencyState] = useState<Currency>('USD');
-    const [isMounted, setIsMounted] = useState(false);
+    const { data: session, status } = useSession();
+    const [currency, setCurrency] = useState<Currency>('USD');
+    const isLoading = status === 'loading';
 
     useEffect(() => {
-        setIsMounted(true);
-        try {
-            const storedCurrency = localStorage.getItem('currency') as Currency | null;
-            if (storedCurrency && currencySymbols[storedCurrency]) {
-                setCurrencyState(storedCurrency);
+        if (status === 'authenticated' && session?.user) {
+            const userCurrency = (session.user as any).currency;
+            if (userCurrency && currencySymbols[userCurrency]) {
+                setCurrency(userCurrency);
             }
-        } catch (error) {
-            console.error("Could not access localStorage:", error);
         }
-    }, []);
+    }, [session, status]);
 
-    const setCurrency = (newCurrency: Currency) => {
+    const handleSetCurrency = (newCurrency: Currency) => {
         if (currencySymbols[newCurrency]) {
-            setCurrencyState(newCurrency);
-            try {
-                localStorage.setItem('currency', newCurrency);
-            } catch (error) {
-                 console.error("Could not access localStorage:", error);
-            }
+            setCurrency(newCurrency);
+            // The actual database update is now handled in the SettingsPage
         }
     };
     
-    // We need to delay rendering of the children until the client-side has mounted
-    // and we have had a chance to read the currency from localStorage.
-    if (!isMounted) {
-        return null;
-    }
-
     const currencySymbol = currencySymbols[currency];
 
     return (
-        <CurrencyContext.Provider value={{ currency, currencySymbol, setCurrency }}>
-            {children}
+        <CurrencyContext.Provider value={{ currency, currencySymbol, setCurrency: handleSetCurrency, isLoading }}>
+            {!isLoading && children}
         </CurrencyContext.Provider>
     );
 };
