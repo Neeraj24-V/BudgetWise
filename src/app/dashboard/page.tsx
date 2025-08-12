@@ -1,7 +1,8 @@
+
 "use client";
 
 import { useState, useEffect, ReactElement } from 'react';
-import { Bot, Send, User, Target, PiggyBank, Briefcase, Car, GraduationCap, Sparkles, DollarSign, Wallet, Group, Settings, X, PlusCircle, Utensils, Bus, Film, ShoppingBag, TrendingUp, ArrowRight } from 'lucide-react';
+import { Bot, Send, User, Target, PiggyBank, Briefcase, Car, GraduationCap, Sparkles, DollarSign, Wallet, Group, Settings, X, PlusCircle, Utensils, Bus, Film, ShoppingBag, TrendingUp, ArrowRight, Home, Shirt } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +13,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, CartesianGrid } from 'recharts';
 import { cn } from '@/lib/utils';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 
 interface Message {
   id: string;
@@ -41,7 +44,14 @@ const iconComponents: { [key: string]: ReactElement } = {
   Bus: <Bus className="w-6 h-6" />,
   Film: <Film className="w-6 h-6" />,
   Utensils: <Utensils className="w-6 h-6" />,
+  Home: <Home className="w-6 h-6" />,
+  Shirt: <Shirt className="w-6 h-6" />,
+  Briefcase: <Briefcase className="w-6 h-6" />,
+  Car: <Car className="w-6 h-6" />,
+  GraduationCap: <GraduationCap className="w-6 h-6" />,
 };
+const iconOptions = Object.keys(iconComponents);
+
 
 const weeklyData = [
   { name: 'Mon', total: 0 },
@@ -227,6 +237,99 @@ function AddExpenseModal({ categoryName, isOpen, onOpenChange, onExpenseAdded }:
   );
 }
 
+function AddCategoryModal({ isOpen, onOpenChange, onCategoryAdded }: { isOpen: boolean, onOpenChange: (isOpen: boolean) => void, onCategoryAdded: () => void }) {
+  const [name, setName] = useState('');
+  const [budget, setBudget] = useState('');
+  const [icon, setIcon] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !budget || !icon) {
+        alert("Please fill out all fields.");
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/budgets', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name,
+                budget: parseFloat(budget),
+                spent: 0,
+                icon,
+                transactions: []
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to add category');
+        }
+
+        setName('');
+        setBudget('');
+        setIcon('');
+        onCategoryAdded();
+        onOpenChange(false);
+    } catch (error) {
+        console.error("Error adding category:", error);
+        alert("Failed to add category. Please try again.");
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add New Budget Category</DialogTitle>
+          <DialogDescription>
+            Create a new category to track your spending.
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit}>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="name" className="text-right">Name</label>
+              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g., Groceries" className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="budget" className="text-right">Budget</label>
+              <Input id="budget" type="number" value={budget} onChange={(e) => setBudget(e.target.value)} placeholder="e.g., 500" className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+               <label htmlFor="icon" className="text-right">Icon</label>
+                <Select onValueChange={setIcon} value={icon}>
+                    <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select an icon" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {iconOptions.map(iconName => (
+                            <SelectItem key={iconName} value={iconName}>
+                                <div className="flex items-center">
+                                    {iconComponents[iconName]}
+                                    <span className="ml-2">{iconName}</span>
+                                </div>
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">Cancel</Button>
+            </DialogClose>
+            <Button type="submit">Add Category</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const value = payload[0].value;
@@ -245,6 +348,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 export default function DashboardPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] = useState(false);
+  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   
   const [budgetCategories, setBudgetCategories] = useState<BudgetCategory[]>([]);
@@ -418,7 +522,7 @@ export default function DashboardPage() {
                         <CardHeader className="flex flex-row items-center justify-between">
                             <div className="flex items-center space-x-4">
                                 <div className="p-3 bg-secondary rounded-full">
-                                    {iconComponents[category.icon]}
+                                    {iconComponents[category.icon] || <DollarSign className="w-6 h-6" />}
                                 </div>
                                 <div>
                                     <CardTitle className="text-xl">{category.name}</CardTitle>
@@ -444,7 +548,7 @@ export default function DashboardPage() {
                     </Card>
                 ))}
             </div>
-             <Button className="w-full mt-6" variant="secondary">
+             <Button className="w-full mt-6" variant="secondary" onClick={() => setIsAddCategoryModalOpen(true)}>
                 <PlusCircle className="w-4 h-4 mr-2" />
                 Add New Budget Category
             </Button>
@@ -542,6 +646,11 @@ export default function DashboardPage() {
         onOpenChange={setIsAddExpenseModalOpen}
         onExpenseAdded={fetchData}
       />
+      <AddCategoryModal
+        isOpen={isAddCategoryModalOpen}
+        onOpenChange={setIsAddCategoryModalOpen}
+        onCategoryAdded={fetchData}
+      />
 
       {/* Floating Chat Button */}
       {!isChatOpen && (
@@ -564,3 +673,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+
