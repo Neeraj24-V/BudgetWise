@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Bot, Send, User, Target, PiggyBank, Briefcase, Car, GraduationCap, Sparkles, DollarSign, Wallet, Group, Settings, X, PlusCircle, Utensils, Bus, Film, ShoppingBag, TrendingUp, ArrowRight } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -20,22 +20,22 @@ interface Message {
 }
 
 const weeklyData = [
-  { name: 'Mon', total: Math.floor(Math.random() * 100) + 20 },
-  { name: 'Tue', total: Math.floor(Math.random() * 100) + 20 },
-  { name: 'Wed', total: Math.floor(Math.random() * 100) + 20 },
-  { name: 'Thu', total: Math.floor(Math.random() * 100) + 20 },
-  { name: 'Fri', total: Math.floor(Math.random() * 100) + 20 },
-  { name: 'Sat', total: Math.floor(Math.random() * 100) + 20 },
-  { name: 'Sun', total: Math.floor(Math.random() * 100) + 20 },
+  { name: 'Mon', total: 0 },
+  { name: 'Tue', total: 0 },
+  { name: 'Wed', total: 0 },
+  { name: 'Thu', total: 0 },
+  { name: 'Fri', total: 0 },
+  { name: 'Sat', total: 0 },
+  { name: 'Sun', total: 0 },
 ];
 
 const monthlyData = [
-  { name: 'Jan', total: Math.floor(Math.random() * 500) + 200 },
-  { name: 'Feb', total: Math.floor(Math.random() * 500) + 200 },
-  { name: 'Mar', total: Math.floor(Math.random() * 500) + 200 },
-  { name: 'Apr', total: Math.floor(Math.random() * 500) + 200 },
-  { name: 'May', total: Math.floor(Math.random() * 500) + 200 },
-  { name: 'Jun', total: Math.floor(Math.random() * 500) + 200 },
+  { name: 'Jan', total: 0 },
+  { name: 'Feb', total: 0 },
+  { name: 'Mar', total: 0 },
+  { name: 'Apr', total: 0 },
+  { name: 'May', total: 0 },
+  { name: 'Jun', total: 0 },
 ];
 
 function ChatInterface({ onClose }: { onClose: () => void }) {
@@ -233,7 +233,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return (
       <div className="p-2 text-xs rounded-lg shadow-md bg-background border">
         <p className="font-bold text-foreground">{`${label}`}</p>
-        <p className="text-muted-foreground">{`Spent: $${payload[0].value}`}</p>
+        <p className="text-muted-foreground">{`Spent: $${payload[0].value.toFixed(2)}`}</p>
       </div>
     );
   }
@@ -246,6 +246,16 @@ export default function DashboardPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
+  
+  const [dynamicWeeklyData, setDynamicWeeklyData] = useState(weeklyData);
+  const [dynamicMonthlyData, setDynamicMonthlyData] = useState(monthlyData);
+
+  useEffect(() => {
+    // This effect runs only once on the client, after hydration
+    setDynamicWeeklyData(weeklyData.map(d => ({ ...d, total: Math.floor(Math.random() * 100) + 20 })));
+    setDynamicMonthlyData(monthlyData.map(d => ({ ...d, total: Math.floor(Math.random() * 500) + 200 })));
+  }, []);
+
 
   const handleAddExpenseClick = (categoryName: string) => {
     setSelectedCategory(categoryName);
@@ -276,7 +286,7 @@ export default function DashboardPage() {
               <TabsContent value="weekly">
                   <div className="h-[250px] w-full">
                       <ResponsiveContainer width="100%" height="100%">
-                          <AreaChart data={weeklyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                          <AreaChart data={dynamicWeeklyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                               <defs>
                                 <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
@@ -295,7 +305,7 @@ export default function DashboardPage() {
               <TabsContent value="monthly">
                   <div className="h-[250px] w-full">
                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={monthlyData}>
+                          <BarChart data={dynamicMonthlyData}>
                               <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
                               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
                               <Tooltip content={<CustomTooltip />} cursor={{fill: 'hsl(var(--primary) / 0.1)'}} />
@@ -508,3 +518,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
