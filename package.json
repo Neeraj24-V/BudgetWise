@@ -28,7 +28,7 @@
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-select": "^2.0.0",
     "recharts": "^2.12.7",
-    "mongodb": "^5.9.2",
+    "mongodb": "5.9.2",
     "genkit": "^1.0.0",
     "@genkit-ai/googleai": "^1.0.0",
     "zod": "^3.23.8",
