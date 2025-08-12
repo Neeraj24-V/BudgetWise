@@ -24,6 +24,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { cn } from '@/lib/utils';
 
 // Mock data for demonstration
 const MOCK_EXPENSES: ExpenseItem[] = [
