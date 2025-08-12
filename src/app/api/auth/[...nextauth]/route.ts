@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { AuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 import { connectToDatabase } from '@/lib/mongodb';
@@ -7,9 +7,11 @@ if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !proce
     throw new Error('Missing Google OAuth or NextAuth secret environment variables');
 }
 
-const authOptions = {
-  // The adapter expects a promise that resolves to a MongoClient instance
-  adapter: MongoDBAdapter(connectToDatabase().then(c => c.client)),
+// The MongoDBAdapter expects a promise that resolves to a MongoClient instance
+const clientPromise = connectToDatabase().then(connection => connection.client);
+
+export const authOptions: AuthOptions = {
+  adapter: MongoDBAdapter(clientPromise),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
