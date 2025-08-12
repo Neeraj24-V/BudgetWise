@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { Bot, Send, User, Target, PiggyBank, Briefcase, Car, GraduationCap, Sparkles, DollarSign, Wallet, Group, Settings, X } from 'lucide-react';
+import { Bot, Send, User, Target, PiggyBank, Briefcase, Car, GraduationCap, Sparkles, DollarSign, Wallet, Group, Settings, X, PlusCircle, Utensils, Bus, Film, ShoppingBag } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -106,11 +106,59 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
   )
 }
 
-const goals = [
-  { id: 1, icon: <Briefcase />, name: 'New Laptop', current: 1250, target: 2000, color: 'text-blue-400' },
-  { id: 2, icon: <Car />, name: 'Dream Vacation', current: 3400, target: 8000, color: 'text-purple-400' },
-  { id: 3, icon: <GraduationCap />, name: 'Student Loan', current: 15000, target: 25000, color: 'text-green-400' },
+const budgetCategories = [
+    {
+      id: 1,
+      name: 'Groceries',
+      icon: <ShoppingBag className="w-6 h-6" />,
+      budget: 500,
+      spent: 285.50,
+      transactions: [
+        { id: 1, name: 'SuperMart', amount: 120.75 },
+        { id: 2, name: 'Local Market', amount: 75.25 },
+        { id: 3, name: 'SuperMart', amount: 89.50 },
+      ],
+    },
+    {
+      id: 2,
+      name: 'Transport',
+      icon: <Bus className="w-6 h-6" />,
+      budget: 150,
+      spent: 85.00,
+      transactions: [
+        { id: 1, name: 'Metro Pass', amount: 65.00 },
+        { id: 2, name: 'Ride Share', amount: 20.00 },
+      ],
+    },
+    {
+        id: 3,
+        name: 'Entertainment',
+        icon: <Film className="w-6 h-6" />,
+        budget: 200,
+        spent: 124.99,
+        transactions: [
+            { id: 1, name: 'Movie Tickets', amount: 30.00 },
+            { id: 2, name: 'Streaming Svc', amount: 14.99 },
+            { id: 3, name: 'Concert', amount: 80.00 },
+        ],
+    },
+     {
+      id: 4,
+      name: 'Dining Out',
+      icon: <Utensils className="w-6 h-6" />,
+      budget: 250,
+      spent: 180.25,
+      transactions: [
+        { id: 1, name: 'The Great Cafe', amount: 45.50 },
+        { id: 2, name: 'Pizza Place', amount: 30.00 },
+        { id: 3, name: 'Local Restaurant', amount: 104.75 },
+      ],
+    },
 ];
+
+const totalBudget = budgetCategories.reduce((acc, cat) => acc + cat.budget, 0);
+const totalSpent = budgetCategories.reduce((acc, cat) => acc + cat.spent, 0);
+
 
 const upcomingBills = [
   { id: 1, name: 'Netflix', date: 'June 25', amount: 15.49 },
@@ -134,35 +182,71 @@ export default function DashboardPage() {
       <main className="container mx-auto p-4 sm:p-6 lg:p-8">
         <Tabs defaultValue="goals" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="goals"><Target className="w-4 h-4 mr-2"/>Goals</TabsTrigger>
+            <TabsTrigger value="goals"><Target className="w-4 h-4 mr-2"/>Budget</TabsTrigger>
             <TabsTrigger value="spending"><DollarSign className="w-4 h-4 mr-2"/>Spending</TabsTrigger>
           </TabsList>
 
           <TabsContent value="goals">
-            <Card>
-              <CardHeader>
-                <CardTitle>Savings Goals</CardTitle>
-                <CardDescription>Turn your financial goals into a motivating game. Track your progress and celebrate your wins!</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-8">
-                {goals.map(goal => (
-                  <div key={goal.id}>
-                    <div className="flex justify-between items-center mb-2">
-                        <div className="flex items-center">
-                            <div className={cn("mr-4", goal.color)}>{goal.icon}</div>
-                            <span className="font-medium">{goal.name}</span>
+             <Card className="mb-6">
+                <CardHeader>
+                    <CardTitle>Monthly Budget Overview</CardTitle>
+                    <CardDescription>Your financial command center for the month.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                        <div>
+                            <p className="text-muted-foreground text-sm">Total Budget</p>
+                            <p className="text-2xl font-bold">${totalBudget.toLocaleString()}</p>
                         </div>
-                      <span className="text-sm text-muted-foreground">${goal.current.toLocaleString()} / ${goal.target.toLocaleString()}</span>
+                        <div>
+                            <p className="text-muted-foreground text-sm">Spent</p>
+                            <p className="text-2xl font-bold text-destructive">${totalSpent.toLocaleString()}</p>
+                        </div>
+                        <div>
+                            <p className="text-muted-foreground text-sm">Remaining</p>
+                            <p className="text-2xl font-bold text-green-500">${(totalBudget - totalSpent).toLocaleString()}</p>
+                        </div>
                     </div>
-                    <Progress value={(goal.current / goal.target) * 100} />
-                  </div>
-                ))}
-                <Button className="w-full mt-4">
-                  <PiggyBank className="w-4 h-4 mr-2" />
-                  Create New Goal
-                </Button>
-              </CardContent>
+                    <Progress value={(totalSpent / totalBudget) * 100} className="mt-4" />
+                </CardContent>
             </Card>
+
+            <div className="grid gap-6 md:grid-cols-2">
+                {budgetCategories.map(category => (
+                    <Card key={category.id}>
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <div className="flex items-center space-x-4">
+                                <div className="p-3 bg-secondary rounded-full">
+                                    {category.icon}
+                                </div>
+                                <div>
+                                    <CardTitle className="text-xl">{category.name}</CardTitle>
+                                    <CardDescription>${category.spent.toLocaleString()} of ${category.budget.toLocaleString()}</CardDescription>
+                                </div>
+                            </div>
+                            <Button size="sm" variant="outline">
+                                <PlusCircle className="w-4 h-4 mr-2" />
+                                Add Expense
+                            </Button>
+                        </CardHeader>
+                        <CardContent>
+                            <Progress value={(category.spent / category.budget) * 100} className="mb-4 h-2" />
+                            <ul className="space-y-2 text-sm">
+                                {category.transactions.map(tx => (
+                                    <li key={tx.id} className="flex justify-between items-center">
+                                        <span>{tx.name}</span>
+                                        <span className="font-medium">${tx.amount.toFixed(2)}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+             <Button className="w-full mt-6" variant="secondary">
+                <PlusCircle className="w-4 h-4 mr-2" />
+                Add New Budget Category
+            </Button>
           </TabsContent>
 
           <TabsContent value="spending">
