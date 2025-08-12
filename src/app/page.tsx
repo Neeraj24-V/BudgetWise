@@ -1,29 +1,14 @@
 
 "use client";
 
-import { BarChart3, BotMessageSquare, CircleDollarSign, Coins, GanttChartSquare, Gem, GitCompareArrows, Group, ListChecks, Smartphone, ShieldCheck, Siren, Cpu, Moon, Sun, Palette, Sparkles } from "lucide-react";
+import { BotMessageSquare, Gem, GanttChartSquare, Sparkles, Siren, Group } from "lucide-react";
 import { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { CurrencyFall } from "@/components/currency-fall";
 import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
-
-const BudgetWiseLogo = ({ className }: {className?: string}) => (
-    <svg
-      role="img"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-        <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-);
 
 export default function Home() {
   const root = useRef(null);
@@ -101,29 +86,6 @@ export default function Home() {
 
   return (
     <div ref={root} className="min-h-screen text-foreground overflow-x-hidden bg-background">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-14 items-center">
-          <a href="/" className="flex items-center space-x-2">
-            <BudgetWiseLogo className="h-6 w-6 text-primary" />
-            <span className="font-bold inline-block">BudgetWise</span>
-          </a>
-          <div className="flex flex-1 items-center justify-end space-x-2">
-            <nav className="hidden md:flex items-center space-x-2">
-              <a href="/dashboard" className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-primary">
-                Dashboard
-              </a>
-              <a href="/login" className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-primary">
-                Login
-              </a>
-              <a href="/register" className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md text-sm font-medium">
-                Register
-              </a>
-            </nav>
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
-
       <main>
         {/* Hero Section */}
         <section className="py-24 sm:py-32 relative isolate overflow-hidden">
