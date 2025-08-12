@@ -1,21 +1,21 @@
-import { Zap, ShieldCheck, Rocket } from "lucide-react";
+import { PiggyBank, BarChart3, ListChecks } from "lucide-react";
 
 export default function Home() {
   const features = [
     {
-      icon: <Rocket className="h-8 w-8 text-white" />,
-      title: "Fast & Efficient",
-      description: "Experience blazing-fast performance that keeps up with your demands, ensuring a smooth and responsive user experience.",
+      icon: <ListChecks className="h-8 w-8 text-white" />,
+      title: "Track Expenses Effortlessly",
+      description: "Easily log your daily expenses and categorize them to see where your money is going. Stay on top of your spending with minimal effort.",
     },
     {
-      icon: <ShieldCheck className="h-8 w-8 text-white" />,
-      title: "Secure & Reliable",
-      description: "Your data is protected with enterprise-grade security. We ensure reliability so you can work with confidence.",
+      icon: <PiggyBank className="h-8 w-8 text-white" />,
+      title: "Smart Budgeting",
+      description: "Create custom budgets for different categories and get notified when you're approaching your limits. Plan your finances and save more effectively.",
     },
     {
-      icon: <Zap className="h-8 w-8 text-white" />,
-      title: "Powerful Integrations",
-      description: "Seamlessly connect with your favorite tools and services to streamline your workflow and boost your productivity.",
+      icon: <BarChart3 className="h-8 w-8 text-white" />,
+      title: "Visualize Your Spending",
+      description: "Get a clear picture of your financial habits with insightful charts and reports. Understand your spending patterns to make smarter decisions.",
     },
   ];
 
@@ -26,10 +26,10 @@ export default function Home() {
         <section className="py-20 md:py-32">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-              The Future of Productivity is Here
+              Take Control of Your Finances
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-              An elegant solution designed to streamline your workflow, boost collaboration, and help you achieve your goals faster than ever before.
+              An elegant solution to track your expenses, manage your budgets, and achieve your financial goals with confidence.
             </p>
             <div className="space-x-4">
               <button className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-md font-semibold">
@@ -47,10 +47,10 @@ export default function Home() {
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">
-                Everything You Need, Nothing You Don't
+                Everything You Need for Financial Clarity
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
-                Our platform is packed with powerful features designed to make your life easier.
+                Our platform is packed with powerful features designed to make managing your money simple and intuitive.
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
@@ -71,7 +71,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-8 bg-background">
           <div className="container mx-auto px-4 text-center text-muted-foreground">
-              <p>&copy; {new Date().getFullYear()} Your Company. All rights reserved.</p>
+              <p>&copy; {new Date().getFullYear()} Expense Tracker. All rights reserved.</p>
           </div>
       </footer>
     </div>
