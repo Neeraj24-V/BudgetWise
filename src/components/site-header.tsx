@@ -3,18 +3,9 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/auth-context';
-import { useRouter } from 'next/navigation';
-import { LogIn, UserPlus, LogOut, LayoutDashboard, Home } from 'lucide-react';
+import { LayoutDashboard, Home } from 'lucide-react';
 
 export function SiteHeader() {
-  const { user, logout, loading } = useAuth();
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    await logout();
-    router.push('/');
-  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -27,38 +18,16 @@ export function SiteHeader() {
           <span className="font-bold text-lg text-gradient-primary">BudgetWise</span>
         </Link>
         <nav className="flex items-center space-x-2">
-          {loading ? (
-             <div className="h-8 w-20 animate-pulse bg-muted rounded-md"></div>
-          ) : user ? (
-            <>
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="/dashboard">
-                  <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
-                </Link>
-              </Button>
-              <Button variant="ghost" size="sm" onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" /> Logout
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="/">
-                  <Home className="mr-2 h-4 w-4" /> Home
-                </Link>
-              </Button>
-              <Button variant="outline" size="sm" asChild className="border-primary text-primary hover:bg-primary/10">
-                <Link href="/login">
-                  <LogIn className="mr-2 h-4 w-4" /> Login
-                </Link>
-              </Button>
-              <Button size="sm" asChild className="gradient-accent text-accent-foreground hover:opacity-90">
-                <Link href="/register">
-                  <UserPlus className="mr-2 h-4 w-4" /> Register
-                </Link>
-              </Button>
-            </>
-          )}
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/">
+              <Home className="mr-2 h-4 w-4" /> Home
+            </Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild className="border-primary text-primary hover:bg-primary/10">
+            <Link href="/dashboard">
+              <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+            </Link>
+          </Button>
         </nav>
       </div>
     </header>

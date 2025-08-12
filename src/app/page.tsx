@@ -7,9 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { CheckCircle, TrendingUp, BarChart, Lightbulb, ShieldCheck, Users } from 'lucide-react';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
-import { useAuth } from '@/contexts/auth-context';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import Image from 'next/image';
 
 const features = [
@@ -46,27 +43,6 @@ const features = [
 ];
 
 export default function HomePage() {
-  const { user, loading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && user) {
-      router.replace('/dashboard');
-    }
-  }, [user, loading, router]);
-
-  if (loading || user) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <SiteHeader />
-        <main className="flex-grow flex items-center justify-center">
-          <div className="animate-pulse rounded-full bg-primary/20 h-12 w-12"></div>
-        </main>
-        <SiteFooter />
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-background to-cyan-200 dark:from-background dark:to-teal-900">
       <SiteHeader />
@@ -83,10 +59,7 @@ export default function HomePage() {
             </p>
             <div className="space-x-4 animate-fade-in [animation-delay:0.6s]">
               <Button size="lg" asChild className="gradient-accent text-accent-foreground hover:opacity-90 shadow-lg transform hover:scale-105 transition-transform duration-300">
-                <Link href="/register">Get Started Free</Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="bg-white/10 text-white border-white/30 hover:bg-white/20 shadow-lg transform hover:scale-105 transition-transform duration-300">
-                <Link href="/login">Login Now</Link>
+                <Link href="/dashboard">Go to Dashboard</Link>
               </Button>
             </div>
           </div>
@@ -148,10 +121,10 @@ export default function HomePage() {
           <div className="container">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Master Your Money?</h2>
             <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto">
-              Join thousands of users who are already taking control of their financial future with BudgetWise.
+              Start taking control of your financial future with BudgetWise today.
             </p>
             <Button size="lg" variant="outline" asChild className="border-white text-white hover:bg-white/10 hover:text-white transform hover:scale-105 transition-transform duration-300 shadow-lg">
-              <Link href="/register">Sign Up For Free</Link>
+              <Link href="/dashboard">Go to Dashboard</Link>
             </Button>
           </div>
         </section>
