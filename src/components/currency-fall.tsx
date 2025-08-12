@@ -7,12 +7,20 @@ import { gsap } from 'gsap';
 export function CurrencyFall() {
   const containerRef = useRef<HTMLDivElement>(null);
   const currencies = ['$', '€', '£', '¥', '₹', '₿'];
+  const lastCall = useRef(0);
+  const throttleDelay = 100; // milliseconds
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     const handleMouseMove = (event: MouseEvent) => {
+      const now = Date.now();
+      if (now - lastCall.current < throttleDelay) {
+        return;
+      }
+      lastCall.current = now;
+
       const rect = container.getBoundingClientRect();
       createFallingCurrency(event.clientX - rect.left, event.clientY - rect.top);
     };
