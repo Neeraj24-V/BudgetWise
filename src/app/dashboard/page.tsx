@@ -20,14 +20,15 @@ interface Message {
 }
 
 interface Transaction {
-  id: number;
+  _id: string;
   name: string;
   amount: number;
   category: string;
+  date: string;
 }
 
 interface BudgetCategory {
-  id: number;
+  _id: string;
   name: string;
   icon: string;
   budget: number;
@@ -156,7 +157,44 @@ const upcomingBills = [
   { id: 3, name: 'Rent', date: 'July 1', amount: 1800.00 },
 ];
 
-function AddExpenseModal({ categoryName, isOpen, onOpenChange }: { categoryName: string, isOpen: boolean, onOpenChange: (isOpen: boolean) => void }) {
+function AddExpenseModal({ categoryName, isOpen, onOpenChange, onExpenseAdded }: { categoryName: string, isOpen: boolean, onOpenChange: (isOpen: boolean) => void, onExpenseAdded: () => void }) {
+  const [description, setDescription] = useState('');
+  const [amount, setAmount] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!description || !amount) {
+        alert("Please fill out both fields.");
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/transactions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: description,
+                amount: parseFloat(amount),
+                category: categoryName
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to add expense');
+        }
+
+        setDescription('');
+        setAmount('');
+        onExpenseAdded(); // Callback to refresh data
+        onOpenChange(false); // Close modal
+    } catch (error) {
+        console.error("Error adding expense:", error);
+        alert("Failed to add expense. Please try again.");
+    }
+  };
+  
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -166,24 +204,24 @@ function AddExpenseModal({ categoryName, isOpen, onOpenChange }: { categoryName:
             Enter the details of your expense. This will be deducted from your budget.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="description" className="text-right">Description</label>
-            <Input id="description" placeholder="e.g., Coffee, Movie tickets" className="col-span-3" />
+        <form onSubmit={handleSubmit}>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="description" className="text-right">Description</label>
+              <Input id="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="e.g., Coffee, Movie tickets" className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="amount" className="text-right">Amount</label>
+              <Input id="amount" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="e.g., 15.50" className="col-span-3" />
+            </div>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="amount" className="text-right">Amount</label>
-            <Input id="amount" type="number" placeholder="e.g., 15.50" className="col-span-3" />
-          </div>
-        </div>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">Cancel</Button>
-          </DialogClose>
-          <DialogClose asChild>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">Cancel</Button>
+            </DialogClose>
             <Button type="submit">Add Expense</Button>
-          </DialogClose>
-        </DialogFooter>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
@@ -215,21 +253,25 @@ export default function DashboardPage() {
   const [dynamicWeeklyData, setDynamicWeeklyData] = useState(weeklyData);
   const [dynamicMonthlyData, setDynamicMonthlyData] = useState(monthlyData);
   
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const budgetsRes = await fetch('/api/budgets');
-        const budgetsData = await budgetsRes.json();
-        setBudgetCategories(budgetsData);
+  const fetchData = async () => {
+    try {
+      const budgetsRes = await fetch('/api/budgets');
+      const budgetsData = await budgetsRes.json();
+      setBudgetCategories(Array.isArray(budgetsData) ? budgetsData : []);
 
-        const transactionsRes = await fetch('/api/transactions');
-        const transactionsData = await transactionsRes.json();
-        setTransactionHistory(transactionsData);
+      const transactionsRes = await fetch('/api/transactions');
+      const transactionsData = await transactionsRes.json();
+      setTransactionHistory(Array.isArray(transactionsData) ? transactionsData : []);
 
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
-      }
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+      // Set to empty arrays in case of error to prevent crashes
+      setBudgetCategories([]);
+      setTransactionHistory([]);
     }
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -372,7 +414,7 @@ export default function DashboardPage() {
 
             <div className="grid gap-6 md:grid-cols-2">
                 {Array.isArray(budgetCategories) && budgetCategories.map(category => (
-                    <Card key={category.id}>
+                    <Card key={category._id}>
                         <CardHeader className="flex flex-row items-center justify-between">
                             <div className="flex items-center space-x-4">
                                 <div className="p-3 bg-secondary rounded-full">
@@ -391,8 +433,8 @@ export default function DashboardPage() {
                         <CardContent>
                             <Progress value={(category.budget > 0 ? (category.spent / category.budget) * 100 : 0)} className="mb-4 h-2" />
                             <ul className="space-y-2 text-sm">
-                                {category.transactions.map(tx => (
-                                    <li key={tx.id} className="flex justify-between items-center">
+                                {transactionHistory.filter(tx => tx.category === category.name).slice(0, 3).map(tx => (
+                                    <li key={tx._id} className="flex justify-between items-center">
                                         <span>{tx.name}</span>
                                         <span className="font-medium">${tx.amount.toFixed(2)}</span>
                                     </li>
@@ -438,14 +480,16 @@ export default function DashboardPage() {
                         <TableRow>
                           <TableHead>Item</TableHead>
                           <TableHead>Category</TableHead>
+                          <TableHead>Date</TableHead>
                           <TableHead className="text-right">Amount</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {Array.isArray(transactionHistory) && transactionHistory.map((item, index) => (
-                          <TableRow key={index}>
+                        {Array.isArray(transactionHistory) && transactionHistory.map((item) => (
+                          <TableRow key={item._id}>
                             <TableCell>{item.name}</TableCell>
                             <TableCell>{item.category}</TableCell>
+                            <TableCell>{new Date(item.date).toLocaleDateString()}</TableCell>
                             <TableCell className="text-right">${item.amount.toFixed(2)}</TableCell>
                           </TableRow>
                         ))}
@@ -496,6 +540,7 @@ export default function DashboardPage() {
         categoryName={selectedCategory}
         isOpen={isAddExpenseModalOpen}
         onOpenChange={setIsAddExpenseModalOpen}
+        onExpenseAdded={fetchData}
       />
 
       {/* Floating Chat Button */}
