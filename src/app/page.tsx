@@ -5,6 +5,7 @@ import { BarChart3, ListChecks, Smartphone, ShieldCheck, Siren, Cpu, Moon, Sun, 
 import { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -134,6 +135,7 @@ export default function Home() {
                 Register
               </a>
             </nav>
+            <ThemeToggle />
           </div>
         </div>
       </header>
