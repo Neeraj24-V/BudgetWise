@@ -7,6 +7,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CurrencyFall } from "@/components/currency-fall";
+import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -117,7 +118,7 @@ export default function Home() {
 
   return (
     <div ref={root} className="min-h-screen text-foreground overflow-x-hidden">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 w-full border-b dark:glass bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-14 items-center">
           <a href="/" className="flex items-center space-x-2">
             <FinFlowLogo className="h-6 w-6 text-primary" />
@@ -142,7 +143,7 @@ export default function Home() {
 
       <main>
         {/* Hero Section */}
-        <section className="bg-background py-24 sm:py-32 relative isolate overflow-hidden">
+        <section className="py-24 sm:py-32 relative isolate overflow-hidden">
           <CurrencyFall />
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 hero-element">
@@ -155,7 +156,7 @@ export default function Home() {
               <button className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-md font-semibold">
                 Get Started
               </button>
-              <button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 py-3 rounded-md font-semibold">
+              <button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 py-3 rounded-md font-semibold dark:glass">
                 Learn More
               </button>
             </div>
@@ -163,7 +164,7 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 bg-secondary/50">
+        <section id="features" className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 bg-secondary/50 dark:bg-transparent">
           <div className="container mx-auto">
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">
@@ -175,7 +176,7 @@ export default function Home() {
             </div>
             <div className="grid md:grid-cols-3 gap-8">
               {features.map((feature, index) => (
-                <div key={index} className="bg-background p-8 rounded-lg shadow-lg feature-card">
+                <div key={index} className={cn("bg-background p-8 rounded-lg shadow-lg feature-card", "dark:bg-card dark:glass")}>
                   <div className="bg-primary/80 rounded-full w-16 h-16 flex items-center justify-center mb-6">
                     {feature.icon}
                   </div>
@@ -188,7 +189,7 @@ export default function Home() {
         </section>
 
         {/* How it Works Section */}
-        <section className="py-20 md:py-32 how-it-works-section px-4 sm:px-6 lg:px-8 bg-background">
+        <section className="py-20 md:py-32 how-it-works-section px-4 sm:px-6 lg:px-8 bg-background dark:bg-transparent">
           <div className="container mx-auto">
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">
@@ -199,21 +200,21 @@ export default function Home() {
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-8 text-center">
-              <div className="how-it-works-card bg-background/70 p-6 rounded-lg border">
+              <div className="how-it-works-card bg-background/70 dark:bg-card dark:glass p-6 rounded-lg border">
                 <div className="flex justify-center items-center mb-4">
                   <div className="bg-primary/80 text-primary-foreground rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold">1</div>
                 </div>
                 <h3 className="text-xl font-bold mb-2">Create Your Budget</h3>
                 <p className="text-muted-foreground">Set up your monthly and category budgets to stay on track.</p>
               </div>
-              <div className="how-it-works-card bg-background/70 p-6 rounded-lg border">
+              <div className="how-it-works-card bg-background/70 dark:bg-card dark:glass p-6 rounded-lg border">
                 <div className="flex justify-center items-center mb-4">
                   <div className="bg-primary/80 text-primary-foreground rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold">2</div>
                 </div>
                 <h3 className="text-xl font-bold mb-2">Log Your Expenses</h3>
                 <p className="text-muted-foreground">Easily add expenses as they happen with our simple interface.</p>
               </div>
-              <div className="how-it-works-card bg-background/70 p-6 rounded-lg border">
+              <div className="how-it-works-card bg-background/70 dark:bg-card dark:glass p-6 rounded-lg border">
                 <div className="flex justify-center items-center mb-4">
                   <div className="bg-primary/80 text-primary-foreground rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold">3</div>
                 </div>
@@ -225,7 +226,7 @@ export default function Home() {
         </section>
 
         {/* Bento Box Section */}
-        <section className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 bg-secondary/50">
+        <section className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 bg-secondary/50 dark:bg-transparent">
           <div className="container mx-auto">
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">Your Financial Command Center</h2>
@@ -234,22 +235,22 @@ export default function Home() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 grid-rows-2 gap-6 bento-grid">
-              <div className="md:col-span-2 p-8 bg-background/70 rounded-lg shadow-lg flex flex-col justify-center items-center text-center bento-item border">
+              <div className="md:col-span-2 p-8 bg-background/70 dark:bg-card dark:glass rounded-lg shadow-lg flex flex-col justify-center items-center text-center bento-item border">
                   <BarChart3 className="h-12 w-12 text-primary mb-4" />
                   <h3 className="text-2xl font-bold mb-2">Interactive Dashboard</h3>
                   <p className="text-muted-foreground">A crystal-clear overview of your financial health at a glance. Track everything from one central hub.</p>
               </div>
-              <div className="p-8 bg-background/70 rounded-lg shadow-lg flex flex-col justify-center items-center text-center bento-item border">
+              <div className="p-8 bg-background/70 dark:bg-card dark:glass rounded-lg shadow-lg flex flex-col justify-center items-center text-center bento-item border">
                   <Siren className="h-12 w-12 text-primary mb-4" />
                   <h3 className="text-2xl font-bold mb-2">Smart Alerts</h3>
                   <p className="text-muted-foreground">Get notified before you overspend.</p>
               </div>
-              <div className="p-8 bg-background/70 rounded-lg shadow-lg flex flex-col justify-center items-center text-center bento-item border">
+              <div className="p-8 bg-background/70 dark:bg-card dark:glass rounded-lg shadow-lg flex flex-col justify-center items-center text-center bento-item border">
                   <Cpu className="h-12 w-12 text-primary mb-4" />
                   <h3 className="text-2xl font-bold mb-2">AI Insights</h3>
                   <p className="text-muted-foreground">Receive personalized tips to save more.</p>
               </div>
-              <div className="md:col-span-2 p-8 bg-background/70 rounded-lg shadow-lg flex flex-col justify-center items-center text-center bento-item border">
+              <div className="md:col-span-2 p-8 bg-background/70 dark:bg-card dark:glass rounded-lg shadow-lg flex flex-col justify-center items-center text-center bento-item border">
                   <Smartphone className="h-12 w-12 text-primary mb-4" />
                   <h3 className="text-2xl font-bold mb-2">Multi-Device Sync</h3>
                   <p className="text-muted-foreground">Access your financial data on your phone, tablet, or desktop. Always in sync, always up-to-date.</p>
@@ -261,7 +262,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="py-8 border-t bg-background">
+      <footer className="py-8 border-t bg-background dark:bg-transparent dark:border-t-border">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-muted-foreground">
               <p>&copy; {new Date().getFullYear()} FinFlow. All rights reserved.</p>
           </div>

@@ -35,22 +35,22 @@
   }
  
   .dark {
-    --background: 0 0% 0%;
+    --background: 0 0% 4%;
     --foreground: 240 8% 80%;
 
-    --card: 240 9% 17%;
+    --card: 240 9% 17% / 0.5;
     --card-foreground: 240 8% 80%;
 
-    --popover: 240 10% 10%;
+    --popover: 240 10% 10% / 0.7;
     --popover-foreground: 240 8% 80%;
 
     --primary: 198 93% 66%;
     --primary-foreground: 240 10% 15%;
 
-    --secondary: 240 9% 20%;
+    --secondary: 240 9% 20% / 0.5;
     --secondary-foreground: 240 8% 80%;
 
-    --muted: 240 9% 20%;
+    --muted: 240 9% 20% / 0.5;
     --muted-foreground: 240 5% 65%;
 
     --accent: 275 67% 76%;
@@ -59,8 +59,8 @@
     --destructive: 350 79% 64%;
     --destructive-foreground: 240 10% 15%;
 
-    --border: 240 7% 25%;
-    --input: 240 7% 25%;
+    --border: 240 7% 25% / 0.5;
+    --input: 240 7% 25% / 0.5;
     --ring: 198 93% 66%;
   }
 }
@@ -71,5 +71,14 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  .dark body {
+    background-image: linear-gradient(to bottom right, #0a0a0a, #1a1a1a);
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply backdrop-blur-md;
   }
 }
