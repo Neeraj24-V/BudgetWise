@@ -1,7 +1,7 @@
 
 "use client";
 
-import { BarChart3, ListChecks, Smartphone, ShieldCheck, Siren, Cpu, Moon, Sun } from "lucide-react";
+import { BarChart3, ListChecks, Smartphone, ShieldCheck, Siren, Cpu, Moon, Sun, Palette } from "lucide-react";
 import { useLayoutEffect, useRef } from 'react';
 import { useTheme } from "next-themes";
 import { gsap } from 'gsap';
@@ -27,19 +27,24 @@ const FinFlowLogo = ({ className }: {className?: string}) => (
     </svg>
 );
 
-
-function ThemeToggle() {
+function ThemeDropdown() {
   const { setTheme, theme } = useTheme();
 
   return (
-    <button
-      className="p-2 rounded-md hover:bg-secondary"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      aria-label="Toggle theme"
-    >
-      <Sun className="h-5 w-5 dark:hidden" />
-      <Moon className="h-5 w-5 hidden dark:block" />
-    </button>
+    <div className="relative">
+      <select
+        value={theme}
+        onChange={(e) => setTheme(e.target.value)}
+        className="appearance-none bg-secondary text-secondary-foreground rounded-md pl-3 pr-8 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring"
+        aria-label="Select theme"
+      >
+        <option value="solarized-osaka">Solarized Osaka</option>
+        <option value="tokyo-night">Tokyo Night</option>
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-secondary-foreground">
+        <Palette className="h-5 w-5" />
+      </div>
+    </div>
   );
 }
 
@@ -152,7 +157,7 @@ export default function Home() {
                 Register
               </a>
             </nav>
-            <ThemeToggle />
+            <ThemeDropdown />
           </div>
         </div>
       </header>

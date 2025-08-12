@@ -21,9 +21,10 @@ export default function RootLayout({
       <body className={cn("min-h-screen bg-background font-sans antialiased", inter.variable)}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
-          enableSystem
+          defaultTheme="solarized-osaka"
+          enableSystem={false}
           disableTransitionOnChange
+          themes={['solarized-osaka', 'tokyo-night']}
         >
           {children}
         </ThemeProvider>
