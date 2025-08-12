@@ -2,101 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Inter', sans-serif;
-}
-
 @layer base {
   :root {
-    --background: 180 100% 93.7%; /* light cyan #E0FFFF */
-    --foreground: 210 20% 20%; /* Darker gray for text on light cyan */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
 
-    --card: 180 60% 96%; /* Slightly darker/muted cyan for cards */
-    --card-foreground: 210 20% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
 
-    --popover: 180 50% 98%; /* Very light cyan for popovers */
-    --popover-foreground: 210 20% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 180 100% 25.1%; /* deep teal #008080 */
-    --primary-foreground: 180 100% 93.7%; /* light cyan for text on deep teal */
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 180 50% 85%; /* Muted teal/cyan for secondary elements */
-    --secondary-foreground: 180 100% 20.1%; /* Darker teal for text on secondary */
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 180 30% 90%; /* Muted light cyan */
-    --muted-foreground: 180 25% 45%; /* Muted gray for text */
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 16 100% 65.7%; /* coral #FF7F50 */
-    --accent-foreground: 0 0% 100%; /* White for text on coral */
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
-    --destructive: 0 72.2% 50.6%; /* A compatible red for destructive actions */
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 180 30% 80%; /* Light teal/cyan border */
-    --input: 180 30% 88%; /* Input background */
-    --ring: 180 100% 35.1%; /* Ring color based on primary */
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
-
-    --chart-1: 180 70% 45%; /* Teal shades for charts */
-    --chart-2: 16 80% 55%;  /* Coral shades for charts */
-    --chart-3: 190 60% 50%;
-    --chart-4: 30 90% 60%;
-    --chart-5: 200 70% 55%;
-
-    --sidebar-background: 180 80% 30%; /* Darker teal for sidebar */
-    --sidebar-foreground: 180 20% 90%; /* Light text for sidebar */
-    --sidebar-primary: 16 100% 65.7%; /* Coral accent for sidebar active items */
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 180 70% 35%; /* Hover/accent for sidebar items */
-    --sidebar-accent-foreground: 180 10% 95%;
-    --sidebar-border: 180 60% 35%;
-    --sidebar-ring: 16 100% 70.7%;
   }
 
   .dark {
-    --background: 210 20% 10%; /* Dark blue-gray */
-    --foreground: 180 20% 90%; /* Light cyan text */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
 
-    --card: 210 20% 15%;
-    --card-foreground: 180 20% 90%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 210 20% 12%;
-    --popover-foreground: 180 20% 90%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 180 100% 35.1%; /* Brighter teal for dark mode */
-    --primary-foreground: 210 20% 5%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 180 50% 25%;
-    --secondary-foreground: 180 20% 90%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 180 30% 20%;
-    --muted-foreground: 180 25% 65%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 16 100% 70.7%; /* Brighter coral for dark mode */
-    --accent-foreground: 210 20% 5%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 40.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 180 30% 25%;
-    --input: 180 30% 22%;
-    --ring: 180 100% 45.1%;
-
-    --chart-1: 180 70% 55%;
-    --chart-2: 16 80% 65%;
-    --chart-3: 190 60% 60%;
-    --chart-4: 30 90% 70%;
-    --chart-5: 200 70% 65%;
-
-    --sidebar-background: 210 25% 12%;
-    --sidebar-foreground: 180 15% 85%;
-    --sidebar-primary: 16 100% 70.7%;
-    --sidebar-primary-foreground: 210 20% 5%;
-    --sidebar-accent: 180 40% 20%;
-    --sidebar-accent-foreground: 180 10% 90%;
-    --sidebar-border: 180 30% 20%;
-    --sidebar-ring: 16 100% 75.7%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
   }
 }
 
@@ -106,18 +72,5 @@ body {
   }
   body {
     @apply bg-background text-foreground;
-    background-image: linear-gradient(to bottom right, hsl(var(--background)), hsl(var(--background) / 0.8));
   }
-}
-
-.gradient-primary {
-  @apply bg-gradient-to-br from-primary to-teal-400 dark:to-teal-600;
-}
-
-.gradient-accent {
-  @apply bg-gradient-to-br from-accent to-orange-400 dark:to-orange-600;
-}
-
-.text-gradient-primary {
-  @apply bg-gradient-to-r from-primary to-teal-500 bg-clip-text text-transparent;
 }
