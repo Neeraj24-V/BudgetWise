@@ -418,6 +418,9 @@ export default function DashboardPage() {
   
   const topTransactionsData = Array.isArray(transactionHistory) ? [...transactionHistory].sort((a, b) => b.amount - a.amount).slice(0, 5).map(tx => ({ name: tx.name, value: tx.amount })) : [];
 
+  const topSpendingCategory = Array.isArray(budgetCategories) && budgetCategories.length > 0
+    ? [...budgetCategories].sort((a, b) => b.spent - a.spent)[0]
+    : null;
 
   const handleAddExpenseClick = (categoryName: string) => {
     setSelectedCategory(categoryName);
@@ -488,12 +491,22 @@ export default function DashboardPage() {
                 <CardHeader className="pb-2">
                   <CardDescription>Top Spending Category</CardDescription>
                   <CardTitle className="text-2xl flex items-center">
-                    <ShoppingBag className="w-6 h-6 mr-2 text-primary"/>
-                    Groceries
+                    {topSpendingCategory ? (
+                        <>
+                            {iconComponents[topSpendingCategory.icon] ? React.cloneElement(iconComponents[topSpendingCategory.icon], { className: "w-6 h-6 mr-2 text-primary" }) : <ShoppingBag className="w-6 h-6 mr-2 text-primary"/>}
+                            {topSpendingCategory.name}
+                        </>
+                    ) : (
+                       "No Spending Yet"
+                    )}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">You've spent {currencySymbol}430.50 on Groceries this month.</p>
+                    {topSpendingCategory ? (
+                        <p className="text-muted-foreground">You've spent {currencySymbol}{topSpendingCategory.spent.toFixed(2)} on {topSpendingCategory.name} this month.</p>
+                    ) : (
+                        <p className="text-muted-foreground">Start adding expenses to see your top category.</p>
+                    )}
                 </CardContent>
               </Card>
               <Card>
@@ -725,5 +738,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
