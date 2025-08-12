@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
 interface Message {
@@ -174,19 +175,58 @@ const categorySpending = [
   { id: 5, category: 'Entertainment', amount: 120.00, happiness: 5 },
 ]
 
+function AddExpenseModal({ categoryName, isOpen, onOpenChange }: { categoryName: string, isOpen: boolean, onOpenChange: (isOpen: boolean) => void }) {
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add Expense to {categoryName}</DialogTitle>
+          <DialogDescription>
+            Enter the details of your expense. This will be deducted from your budget.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <label htmlFor="description" className="text-right">Description</label>
+            <Input id="description" placeholder="e.g., Coffee, Movie tickets" className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <label htmlFor="amount" className="text-right">Amount</label>
+            <Input id="amount" type="number" placeholder="e.g., 15.50" className="col-span-3" />
+          </div>
+        </div>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button type="button" variant="secondary">Cancel</Button>
+          </DialogClose>
+          <Button type="submit">Add Expense</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+
 export default function DashboardPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const handleAddExpenseClick = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+    setIsAddExpenseModalOpen(true);
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <main className="container mx-auto p-4 sm:p-6 lg:p-8">
-        <Tabs defaultValue="goals" className="w-full">
+        <Tabs defaultValue="budget" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="goals"><Target className="w-4 h-4 mr-2"/>Budget</TabsTrigger>
+            <TabsTrigger value="budget"><Target className="w-4 h-4 mr-2"/>Budget</TabsTrigger>
             <TabsTrigger value="spending"><DollarSign className="w-4 h-4 mr-2"/>Spending</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="goals">
+          <TabsContent value="budget">
              <Card className="mb-6">
                 <CardHeader>
                     <CardTitle>Monthly Budget Overview</CardTitle>
@@ -224,7 +264,7 @@ export default function DashboardPage() {
                                     <CardDescription>${category.spent.toLocaleString()} of ${category.budget.toLocaleString()}</CardDescription>
                                 </div>
                             </div>
-                            <Button size="sm" variant="outline">
+                            <Button size="sm" variant="outline" onClick={() => handleAddExpenseClick(category.name)}>
                                 <PlusCircle className="w-4 h-4 mr-2" />
                                 Add Expense
                             </Button>
@@ -319,6 +359,12 @@ export default function DashboardPage() {
           </TabsContent>
         </Tabs>
       </main>
+
+      <AddExpenseModal
+        categoryName={selectedCategory}
+        isOpen={isAddExpenseModalOpen}
+        onOpenChange={setIsAddExpenseModalOpen}
+      />
 
       {/* Floating Chat Button */}
       {!isChatOpen && (
