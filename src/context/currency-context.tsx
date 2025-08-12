@@ -3,8 +3,8 @@
 
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 
-export type Currency = 'USD' | 'EUR' | 'GBP' | 'JPY';
-type CurrencySymbol = '$' | '€' | '£' | '¥';
+export type Currency = 'USD' | 'EUR' | 'GBP' | 'JPY' | 'INR';
+type CurrencySymbol = '$' | '€' | '£' | '¥' | '₹';
 
 interface CurrencyContextType {
     currency: Currency;
@@ -16,7 +16,8 @@ const currencySymbols: { [key in Currency]: CurrencySymbol } = {
     USD: '$',
     EUR: '€',
     GBP: '£',
-    JPY: '¥'
+    JPY: '¥',
+    INR: '₹'
 };
 
 export const CurrencyContext = createContext<CurrencyContextType>({
