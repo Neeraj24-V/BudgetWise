@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,22 @@ import { CurrencyContext, Currency } from '@/context/currency-context';
 
 export default function SettingsPage() {
     const { currency, setCurrency } = useContext(CurrencyContext);
+    const [name, setName] = useState('John Doe');
+    const [email, setEmail] = useState('john.doe@example.com');
+
+    useEffect(() => {
+        const storedName = localStorage.getItem('userName');
+        if (storedName) setName(storedName);
+
+        const storedEmail = localStorage.getItem('userEmail');
+        if (storedEmail) setEmail(storedEmail);
+    }, []);
+
+    const handleProfileUpdate = () => {
+        localStorage.setItem('userName', name);
+        localStorage.setItem('userEmail', email);
+        alert('Profile updated successfully!');
+    };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -37,13 +53,13 @@ export default function SettingsPage() {
               </div>
               <div className="space-y-2">
                 <label htmlFor="name">Name</label>
-                <Input id="name" defaultValue="John Doe" />
+                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
               </div>
               <div className="space-y-2">
                 <label htmlFor="email">Email</label>
-                <Input id="email" type="email" defaultValue="john.doe@example.com" />
+                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
-              <Button>Update Profile</Button>
+              <Button onClick={handleProfileUpdate}>Update Profile</Button>
             </CardContent>
           </Card>
 
