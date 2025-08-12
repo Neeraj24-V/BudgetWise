@@ -116,7 +116,7 @@ export default function Home() {
   ];
 
   return (
-    <div ref={root} className="min-h-screen bg-background text-foreground overflow-x-hidden">
+    <div ref={root} className="min-h-screen bg-black text-foreground overflow-x-hidden">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-14 items-center">
           <a href="/" className="flex items-center space-x-2">
@@ -142,7 +142,7 @@ export default function Home() {
 
       <main>
         {/* Hero Section */}
-        <section className="py-24 sm:py-32 relative isolate overflow-hidden">
+        <section className="bg-background py-24 sm:py-32 relative isolate overflow-hidden">
           <CurrencyFall />
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 hero-element">
@@ -188,7 +188,7 @@ export default function Home() {
         </section>
 
         {/* How it Works Section */}
-        <section className="py-20 md:py-32 how-it-works-section px-4 sm:px-6 lg:px-8">
+        <section className="py-20 md:py-32 how-it-works-section px-4 sm:px-6 lg:px-8 bg-background">
           <div className="container mx-auto">
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">
@@ -261,7 +261,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="py-8 border-t">
+      <footer className="py-8 border-t bg-background">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-muted-foreground">
               <p>&copy; {new Date().getFullYear()} FinFlow. All rights reserved.</p>
           </div>
