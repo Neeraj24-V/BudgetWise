@@ -3,40 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-  /* Default to solarized-osaka */
-  :root, .theme-solarized-osaka {
-    --background: 220 13% 95%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 220 13% 95%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 220 13% 95%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 210 27% 30%;
-    --primary-foreground: 34, 100%, 97%;
-
-    --secondary: 220 14% 90%;
-    --secondary-foreground: 210 27% 30%;
-
-    --muted: 220 14% 90%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 187 46% 41%;
-    --accent-foreground: 34, 100%, 97%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 220 13% 85%;
-    --input: 220 13% 85%;
-    --ring: 210 27% 30%;
-
-    --radius: 0.5rem;
-  }
-
-  .theme-tokyo-night {
+  /* Default to tokyo-night */
+  :root, .theme-tokyo-night {
     --background: 240 10% 15%; /* bg */
     --foreground: 240 8% 80%; /* fg */
 
@@ -64,6 +32,38 @@
     --border: 240 7% 25%;
     --input: 240 7% 25%;
     --ring: 198 93% 66%; /* blue */
+  }
+
+  .theme-solarized-osaka {
+    --background: 220 13% 18%;
+    --foreground: 220 10% 75%;
+
+    --card: 220 13% 15%;
+    --card-foreground: 220 10% 75%;
+
+    --popover: 220 13% 18%;
+    --popover-foreground: 220 10% 75%;
+
+    --primary: 187 46% 41%;
+    --primary-foreground: 34, 100%, 97%;
+
+    --secondary: 220 14% 25%;
+    --secondary-foreground: 220 10% 75%;
+
+    --muted: 220 14% 25%;
+    --muted-foreground: 220 10% 55%;
+
+    --accent: 210 27% 30%;
+    --accent-foreground: 34, 100%, 97%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 13% 30%;
+    --input: 220 13% 30%;
+    --ring: 187 46% 41%;
+
+    --radius: 0.5rem;
   }
 }
 
