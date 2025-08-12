@@ -7,6 +7,18 @@ import { gsap } from 'gsap';
 export function Snowfall() {
   const containerRef = useRef<HTMLDivElement>(null);
   const flakeCount = 50;
+  const snowflakeSVG = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 17.58A5 5 0 0 0 15 12v-2h-2v2a5 5 0 0 0-5 5.58"/>
+      <path d="M2 12h20"/>
+      <path d="m5 7 1.09 1.09"/>
+      <path d="m12 2 1.09 1.09"/>
+      <path d="m19 7-1.09 1.09"/>
+      <path d="m5 17 1.09-1.09"/>
+      <path d="m12 22-1.09-1.09"/>
+      <path d="m19 17-1.09-1.09"/>
+    </svg>
+  `;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -19,9 +31,8 @@ export function Snowfall() {
       const flake = document.createElement('div');
       flake.className = 'snowflake';
       flake.style.position = 'absolute';
-      flake.style.backgroundColor = 'white';
-      flake.style.borderRadius = '50%';
       flake.style.opacity = '0';
+      flake.innerHTML = snowflakeSVG;
       container.appendChild(flake);
       
       animateFlake(flake, containerWidth, containerHeight);
@@ -29,11 +40,12 @@ export function Snowfall() {
   }, []);
 
   const animateFlake = (flake: HTMLDivElement, containerWidth: number, containerHeight: number) => {
+    const size = Math.random() * 20 + 10;
     gsap.set(flake, {
       x: Math.random() * containerWidth,
       y: -20,
-      width: Math.random() * 5 + 2,
-      height: Math.random() * 5 + 2,
+      width: size,
+      height: size,
       opacity: Math.random() * 0.5 + 0.3,
     });
 
@@ -44,6 +56,7 @@ export function Snowfall() {
       duration: duration,
       y: endY,
       x: '+=_rand(-100, 100)',
+      rotation: '+=_rand(-180, 180)',
       ease: 'none',
       onComplete: () => {
         gsap.to(flake, {
