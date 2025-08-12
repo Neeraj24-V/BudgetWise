@@ -1,7 +1,8 @@
 
+
 "use client";
 
-import { useState, useEffect, ReactElement, useContext } from 'react';
+import React, { useState, useEffect, ReactElement, useContext } from 'react';
 import { Bot, Send, User, Target, PiggyBank, Briefcase, Car, GraduationCap, Sparkles, DollarSign, Wallet, Group, Settings, X, PlusCircle, Utensils, Bus, Film, ShoppingBag, TrendingUp, ArrowRight, Home, Shirt } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
