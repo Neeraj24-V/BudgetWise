@@ -21,9 +21,10 @@ import { financialCoPilotFlow, FinancialCoPilotInput } from '@/ai/flows/financia
 
 interface Message {
   id: string;
-  text: string;
-  isUser: boolean;
+  role: 'user' | 'model';
+  content: { text: string }[];
 }
+
 
 interface Transaction {
   _id: string;
@@ -57,7 +58,7 @@ const iconOptions = Object.keys(iconComponents);
 
 function ChatInterface({ onClose }: { onClose: () => void }) {
   const [messages, setMessages] = useState<Message[]>([
-    { id: '1', text: "Hello! I'm your AI Financial Co-Pilot. How can I help you today?", isUser: false },
+    { id: '1', role: 'model', content: [{text: "Hello! I'm your AI Financial Co-Pilot. How can I help you today?"}] },
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -68,8 +69,8 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
 
     const userMessage: Message = {
       id: (messages.length + 1).toString(),
-      text: input,
-      isUser: true,
+      role: 'user',
+      content: [{text: input}],
     };
     setMessages(prev => [...prev, userMessage]);
     
@@ -77,9 +78,10 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
     setInput('');
 
     try {
+      // The history needs to be in a specific format for the AI
       const historyForAI = messages.map(m => ({
-        role: m.isUser ? 'user' : 'model',
-        content: [{ text: m.text }],
+        role: m.role,
+        content: m.content,
       }));
 
       const flowInput: FinancialCoPilotInput = {
@@ -91,8 +93,8 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
 
       const aiMessage: Message = {
         id: (messages.length + 2).toString(),
-        text: aiResponseText,
-        isUser: false,
+        role: 'model',
+        content: [{ text: aiResponseText }],
       };
       setMessages(prev => [...prev, aiMessage]);
 
@@ -100,8 +102,8 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
       console.error("AI flow error:", error);
       const errorMessage: Message = {
         id: (messages.length + 2).toString(),
-        text: "Sorry, I'm having trouble connecting to my brain right now. Please try again later.",
-        isUser: false,
+        role: 'model',
+        content: [{text: "Sorry, I'm having trouble connecting to my brain right now. Please try again later."}],
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -133,10 +135,10 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
               key={message.id}
               className={cn(
                 'flex items-start gap-4',
-                message.isUser ? 'justify-end' : ''
+                message.role === 'user' ? 'justify-end' : ''
               )}
             >
-              {!message.isUser && (
+              {message.role !== 'user' && (
                 <Avatar className="h-8 w-8 border">
                   <AvatarFallback><Bot className="w-5 h-5"/></AvatarFallback>
                 </Avatar>
@@ -144,14 +146,14 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
               <div
                 className={cn(
                   'max-w-[75%] p-3 rounded-lg text-sm',
-                  message.isUser
+                  message.role === 'user'
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted'
                 )}
               >
-                <p>{message.text}</p>
+                <p>{message.content[0].text}</p>
               </div>
-              {message.isUser && (
+              {message.role === 'user' && (
                 <Avatar className="h-8 w-8 border">
                   <AvatarFallback><User className="w-5 h-5"/></AvatarFallback>
                 </Avatar>
