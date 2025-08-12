@@ -135,9 +135,9 @@ const budgetCategories = [
       budget: 500,
       spent: 285.50,
       transactions: [
-        { id: 1, name: 'SuperMart', amount: 120.75 },
-        { id: 2, name: 'Local Market', amount: 75.25 },
-        { id: 3, name: 'SuperMart', amount: 89.50 },
+        { id: 1, name: 'SuperMart', amount: 120.75, category: 'Groceries' },
+        { id: 2, name: 'Local Market', amount: 75.25, category: 'Groceries' },
+        { id: 3, name: 'SuperMart', amount: 89.50, category: 'Groceries' },
       ],
     },
     {
@@ -147,8 +147,8 @@ const budgetCategories = [
       budget: 150,
       spent: 85.00,
       transactions: [
-        { id: 1, name: 'Metro Pass', amount: 65.00 },
-        { id: 2, name: 'Ride Share', amount: 20.00 },
+        { id: 1, name: 'Metro Pass', amount: 65.00, category: 'Transport' },
+        { id: 2, name: 'Ride Share', amount: 20.00, category: 'Transport' },
       ],
     },
     {
@@ -158,9 +158,9 @@ const budgetCategories = [
         budget: 200,
         spent: 124.99,
         transactions: [
-            { id: 1, name: 'Movie Tickets', amount: 30.00 },
-            { id: 2, name: 'Streaming Svc', amount: 14.99 },
-            { id: 3, name: 'Concert', amount: 80.00 },
+            { id: 1, name: 'Movie Tickets', amount: 30.00, category: 'Entertainment' },
+            { id: 2, name: 'Streaming Svc', amount: 14.99, category: 'Entertainment' },
+            { id: 3, name: 'Concert', amount: 80.00, category: 'Entertainment' },
         ],
     },
      {
@@ -170,9 +170,9 @@ const budgetCategories = [
       budget: 250,
       spent: 180.25,
       transactions: [
-        { id: 1, name: 'The Great Cafe', amount: 45.50 },
-        { id: 2, name: 'Pizza Place', amount: 30.00 },
-        { id: 3, name: 'Local Restaurant', amount: 104.75 },
+        { id: 1, name: 'The Great Cafe', amount: 45.50, category: 'Dining Out' },
+        { id: 2, name: 'Pizza Place', amount: 30.00, category: 'Dining Out' },
+        { id: 3, name: 'Local Restaurant', amount: 104.75, category: 'Dining Out' },
       ],
     },
 ];
@@ -187,13 +187,16 @@ const upcomingBills = [
   { id: 3, name: 'Rent', date: 'July 1', amount: 1800.00 },
 ];
 
-const categorySpending = [
-  { id: 1, category: 'Groceries', amount: 430.50, happiness: 4 },
-  { id: 2, category: 'Dining Out', amount: 210.75, happiness: 5 },
-  { id: 3, category: 'Shopping', amount: 150.00, happiness: 3 },
-  { id: 4, category: 'Transport', amount: 85.00, happiness: 4 },
-  { id: 5, category: 'Entertainment', amount: 120.00, happiness: 5 },
-]
+const categorySpendingData = [
+  { name: 'Groceries', spent: 285.50 },
+  { name: 'Dining Out', spent: 180.25 },
+  { name: 'Entertainment', spent: 124.99 },
+  { name: 'Transport', spent: 85.00 },
+  { name: 'Shopping', spent: 150.00 },
+];
+
+const transactionHistory = budgetCategories.flatMap(c => c.transactions);
+
 
 function AddExpenseModal({ categoryName, isOpen, onOpenChange }: { categoryName: string, isOpen: boolean, onOpenChange: (isOpen: boolean) => void }) {
   return (
@@ -230,10 +233,12 @@ function AddExpenseModal({ categoryName, isOpen, onOpenChange }: { categoryName:
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
+    const value = payload[0].value;
+    const name = payload[0].payload.name || label;
     return (
       <div className="p-2 text-xs rounded-lg shadow-md bg-background border">
-        <p className="font-bold text-foreground">{`${label}`}</p>
-        <p className="text-muted-foreground">{`Spent: $${payload[0].value.toFixed(2)}`}</p>
+        <p className="font-bold text-foreground">{`${name}`}</p>
+        <p className="text-muted-foreground">{`Spent: $${value.toFixed(2)}`}</p>
       </div>
     );
   }
@@ -422,38 +427,51 @@ export default function DashboardPage() {
 
           <TabsContent value="spending">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <CardTitle>Mindful Spending</CardTitle>
-                  <CardDescription>Track your spending and rate purchases on happiness to align with your values.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Category</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
-                        <TableHead className="text-right">Happiness Score</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {categorySpending.map(item => (
-                        <TableRow key={item.id}>
-                          <TableCell>{item.category}</TableCell>
-                          <TableCell className="text-right">${item.amount.toFixed(2)}</TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end items-center">
-                              {Array.from({ length: 5 }).map((_, i) => (
-                                <Sparkles key={i} className={cn("w-4 h-4", i < item.happiness ? "text-yellow-400 fill-current" : "text-muted-foreground")} />
-                              ))}
-                            </div>
-                          </TableCell>
+              <div className="space-y-6 lg:col-span-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Spending by Category</CardTitle>
+                    <CardDescription>A visual breakdown of where your money is going.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="h-[250px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={categorySpendingData} layout="vertical" margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                        <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
+                        <YAxis type="category" dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                        <Tooltip content={<CustomTooltip />} cursor={{fill: 'hsl(var(--primary) / 0.1)'}} />
+                        <Bar dataKey="spent" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Transaction History</CardTitle>
+                    <CardDescription>A detailed log of your recent spending.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Item</TableHead>
+                          <TableHead>Category</TableHead>
+                          <TableHead className="text-right">Amount</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
+                      </TableHeader>
+                      <TableBody>
+                        {transactionHistory.map((item, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{item.name}</TableCell>
+                            <TableCell>{item.category}</TableCell>
+                            <TableCell className="text-right">${item.amount.toFixed(2)}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              </div>
+
               <div className="space-y-6">
                 <Card>
                   <CardHeader>
@@ -518,5 +536,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
