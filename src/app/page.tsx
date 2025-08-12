@@ -1,6 +1,41 @@
+"use client";
+
 import { PiggyBank, BarChart3, ListChecks } from "lucide-react";
+import { useLayoutEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
+  const root = useRef(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(".hero-element", {
+        opacity: 0,
+        y: 20,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power3.out",
+      });
+
+      gsap.from(".feature-card", {
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power3.out",
+        scrollTrigger: {
+            trigger: "#features",
+            start: "top 80%",
+        }
+      });
+    }, root);
+
+    return () => ctx.revert();
+  }, []);
+
   const features = [
     {
       icon: <ListChecks className="h-8 w-8 text-white" />,
@@ -20,18 +55,18 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div ref={root} className="min-h-screen bg-background text-foreground">
       <main>
         {/* Hero Section */}
         <section className="py-20 md:py-32">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 hero-element">
               Take Control of Your Finances
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 hero-element">
               An elegant solution to track your expenses, manage your budgets, and achieve your financial goals with confidence.
             </p>
-            <div className="space-x-4">
+            <div className="space-x-4 hero-element">
               <button className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-md font-semibold">
                 Get Started
               </button>
@@ -55,7 +90,7 @@ export default function Home() {
             </div>
             <div className="grid md:grid-cols-3 gap-8">
               {features.map((feature, index) => (
-                <div key={index} className="bg-card p-8 rounded-lg shadow-md">
+                <div key={index} className="bg-card p-8 rounded-lg shadow-md feature-card">
                   <div className="bg-primary rounded-full w-16 h-16 flex items-center justify-center mb-6">
                     {feature.icon}
                   </div>
