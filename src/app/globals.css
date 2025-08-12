@@ -3,8 +3,7 @@
 @tailwind utilities;
 
 @layer base {
-  /* Default to tokyo-night */
-  :root, .theme-tokyo-night {
+  :root {
     --background: 240 10% 15%; /* bg */
     --foreground: 240 8% 80%; /* fg */
 
@@ -32,38 +31,6 @@
     --border: 240 7% 25%;
     --input: 240 7% 25%;
     --ring: 198 93% 66%; /* blue */
-
-    --radius: 0.5rem;
-  }
-
-  .theme-solarized-osaka {
-    --background: 220 13% 18%;
-    --foreground: 220 10% 75%;
-
-    --card: 220 13% 15%;
-    --card-foreground: 220 10% 75%;
-
-    --popover: 220 13% 18%;
-    --popover-foreground: 220 10% 75%;
-
-    --primary: 187 46% 41%;
-    --primary-foreground: 34, 100%, 97%;
-
-    --secondary: 220 14% 25%;
-    --secondary-foreground: 220 10% 75%;
-
-    --muted: 220 14% 25%;
-    --muted-foreground: 220 10% 55%;
-
-    --accent: 210 27% 30%;
-    --accent-foreground: 34, 100%, 97%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 220 13% 30%;
-    --input: 220 13% 30%;
-    --ring: 187 46% 41%;
 
     --radius: 0.5rem;
   }

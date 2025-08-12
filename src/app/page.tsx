@@ -3,7 +3,6 @@
 
 import { BarChart3, ListChecks, Smartphone, ShieldCheck, Siren, Cpu, Moon, Sun, Palette } from "lucide-react";
 import { useLayoutEffect, useRef } from 'react';
-import { useTheme } from "next-themes";
 import { gsap } from 'gsap';
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -26,28 +25,6 @@ const FinFlowLogo = ({ className }: {className?: string}) => (
         ></path>
     </svg>
 );
-
-function ThemeDropdown() {
-  const { setTheme, theme } = useTheme();
-
-  return (
-    <div className="relative">
-      <select
-        value={theme}
-        onChange={(e) => setTheme(e.target.value)}
-        className="appearance-none bg-secondary text-secondary-foreground rounded-md pl-3 pr-8 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring"
-        aria-label="Select theme"
-      >
-        <option value="solarized-osaka">Solarized Osaka</option>
-        <option value="tokyo-night">Tokyo Night</option>
-      </select>
-      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-secondary-foreground">
-        <Palette className="h-5 w-5" />
-      </div>
-    </div>
-  );
-}
-
 
 export default function Home() {
   const root = useRef(null);
@@ -157,7 +134,6 @@ export default function Home() {
                 Register
               </a>
             </nav>
-            <ThemeDropdown />
           </div>
         </div>
       </header>
@@ -202,6 +178,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-2xl font-bold mb-3">{feature.title}</h3>
                   <p className="text-muted-foreground">{feature.description}</p>
+
                 </div>
               ))}
             </div>
