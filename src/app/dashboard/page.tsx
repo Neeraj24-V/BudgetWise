@@ -37,7 +37,6 @@ interface BudgetCategory {
   icon: string;
   budget: number;
   spent: number;
-  transactions: Transaction[];
 }
 
 const iconComponents: { [key: string]: ReactElement } = {
@@ -261,7 +260,6 @@ function AddCategoryModal({ isOpen, onOpenChange, onCategoryAdded }: { isOpen: b
                 budget: parseFloat(budget),
                 spent: 0,
                 icon,
-                transactions: []
             }),
         });
 
