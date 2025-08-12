@@ -53,25 +53,6 @@ const iconComponents: { [key: string]: ReactElement } = {
 const iconOptions = Object.keys(iconComponents);
 
 
-const weeklyData = [
-  { name: 'Mon', total: 0 },
-  { name: 'Tue', total: 0 },
-  { name: 'Wed', total: 0 },
-  { name: 'Thu', total: 0 },
-  { name: 'Fri', total: 0 },
-  { name: 'Sat', total: 0 },
-  { name: 'Sun', total: 0 },
-];
-
-const monthlyData = [
-  { name: 'Jan', total: 0 },
-  { name: 'Feb', total: 0 },
-  { name: 'Mar', total: 0 },
-  { name: 'Apr', total: 0 },
-  { name: 'May', total: 0 },
-  { name: 'Jun', total: 0 },
-];
-
 function ChatInterface({ onClose }: { onClose: () => void }) {
   const [messages, setMessages] = useState<Message[]>([
     { id: '1', text: "Hello! I'm your AI Financial Co-Pilot. How can I help you today?", isUser: false },
@@ -353,8 +334,8 @@ export default function DashboardPage() {
   const [budgetCategories, setBudgetCategories] = useState<BudgetCategory[]>([]);
   const [transactionHistory, setTransactionHistory] = useState<Transaction[]>([]);
 
-  const [dynamicWeeklyData, setDynamicWeeklyData] = useState(weeklyData);
-  const [dynamicMonthlyData, setDynamicMonthlyData] = useState(monthlyData);
+  const [weeklyData, setWeeklyData] = useState<{name: string, total: number}[]>([]);
+  const [monthlyData, setMonthlyData] = useState<{name: string, total: number}[]>([]);
   
   const { currencySymbol } = useContext(CurrencyContext);
 
@@ -381,10 +362,51 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    // This effect runs only once on the client, after hydration
-    setDynamicWeeklyData(weeklyData.map(d => ({ ...d, total: Math.floor(Math.random() * 100) + 20 })));
-    setDynamicMonthlyData(monthlyData.map(d => ({ ...d, total: Math.floor(Math.random() * 500) + 200 })));
-  }, []);
+    if (transactionHistory.length > 0) {
+      // Process data for weekly chart
+      const today = new Date();
+      const dayOfWeek = today.getDay(); // Sunday - 0, Monday - 1, etc.
+      const startOfWeek = new Date(today.setDate(today.getDate() - dayOfWeek));
+
+      const newWeeklyData = [
+        { name: 'Sun', total: 0 }, { name: 'Mon', total: 0 },
+        { name: 'Tue', total: 0 }, { name: 'Wed', total: 0 },
+        { name: 'Thu', total: 0 }, { name: 'Fri', total: 0 },
+        { name: 'Sat', total: 0 }
+      ];
+
+      transactionHistory.forEach(tx => {
+        const txDate = new Date(tx.date);
+        if (txDate >= startOfWeek) {
+          const dayIndex = txDate.getDay();
+          newWeeklyData[dayIndex].total += tx.amount;
+        }
+      });
+      setWeeklyData(newWeeklyData);
+
+      // Process data for monthly chart
+      const now = new Date();
+      const lastSixMonths: {name: string, total: number}[] = [];
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        lastSixMonths.push({
+          name: d.toLocaleString('default', { month: 'short' }),
+          total: 0
+        });
+      }
+      
+      transactionHistory.forEach(tx => {
+        const txDate = new Date(tx.date);
+        const monthDiff = (now.getFullYear() - txDate.getFullYear()) * 12 + (now.getMonth() - txDate.getMonth());
+        if (monthDiff >= 0 && monthDiff < 6) {
+           const monthIndex = 5 - monthDiff;
+           lastSixMonths[monthIndex].total += tx.amount;
+        }
+      });
+      setMonthlyData(lastSixMonths);
+    }
+  }, [transactionHistory]);
+
 
   const totalBudget = Array.isArray(budgetCategories) ? budgetCategories.reduce((acc, cat) => acc + cat.budget, 0) : 0;
   const totalSpent = Array.isArray(budgetCategories) ? budgetCategories.reduce((acc, cat) => acc + cat.spent, 0) : 0;
@@ -421,7 +443,7 @@ export default function DashboardPage() {
               <TabsContent value="weekly">
                   <div className="h-[250px] w-full">
                       <ResponsiveContainer width="100%" height="100%">
-                          <AreaChart data={dynamicWeeklyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                          <AreaChart data={weeklyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                               <defs>
                                 <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
@@ -440,7 +462,7 @@ export default function DashboardPage() {
               <TabsContent value="monthly">
                   <div className="h-[250px] w-full">
                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={dynamicMonthlyData}>
+                          <BarChart data={monthlyData}>
                               <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
                               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${currencySymbol}${value}`} />
                               <Tooltip content={<CustomTooltip currencySymbol={currencySymbol} />} cursor={{fill: 'hsl(var(--primary) / 0.1)'}} />
