@@ -117,7 +117,7 @@ export default function Home() {
 
   return (
     <div ref={root} className="min-h-screen text-foreground overflow-x-hidden">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-lg">
+      <header className="sticky top-0 z-50 w-full frosted-glass">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-14 items-center">
           <a href="/" className="flex items-center space-x-2">
             <FinFlowLogo className="h-6 w-6 text-primary" />
@@ -164,8 +164,8 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-20 md:py-32">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="features" className="py-20 md:py-32 px-4 sm:px-6 lg:px-8">
+          <div className="container mx-auto">
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">
                 Everything You Need for Financial Clarity
@@ -189,8 +189,8 @@ export default function Home() {
         </section>
 
         {/* How it Works Section */}
-        <section className="py-20 md:py-32 how-it-works-section">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="py-20 md:py-32 how-it-works-section px-4 sm:px-6 lg:px-8">
+          <div className="container mx-auto">
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">
                 Get Started in 3 Easy Steps
@@ -226,8 +226,8 @@ export default function Home() {
         </section>
 
         {/* Bento Box Section */}
-        <section className="py-20 md:py-32">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="py-20 md:py-32 px-4 sm:px-6 lg:px-8">
+          <div className="container mx-auto">
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-bold">Your Financial Command Center</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
