@@ -5,7 +5,7 @@
 
 import { ai } from '@/ai/genkit';
 import { getBudgetsTool, getTransactionsTool } from '@/ai/tools/database-tools';
-import { Message, Part } from 'genkit';
+import { Part } from 'genkit';
 import { z } from 'zod';
 
 // Simplified schema for individual messages

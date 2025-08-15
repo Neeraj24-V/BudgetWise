@@ -22,10 +22,7 @@ const authOptions: AuthOptions = {
     }),
   ],
   adapter: MongoDBAdapter(
-    (async () => {
-        const { client } = await connectToDatabase();
-        return client;
-    })()
+    connectToDatabase().then(conn => conn.client)
   ),
   session: {
     strategy: 'database',
