@@ -481,7 +481,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <main className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+      <main className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
         <Card>
           <CardHeader>
               <CardTitle>Financial Summary</CardTitle>
@@ -773,7 +773,7 @@ export default function DashboardPage() {
       {!isChatOpen && (
         <Button
           onClick={() => setIsChatOpen(true)}
-          className="fixed bottom-24 right-6 h-16 w-16 rounded-full shadow-lg"
+          className="fixed bottom-24 right-6 h-16 w-16 rounded-full shadow-lg z-50"
           size="icon"
         >
           <Bot className="h-8 w-8" />
@@ -790,5 +790,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

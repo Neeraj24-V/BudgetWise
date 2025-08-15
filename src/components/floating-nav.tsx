@@ -39,27 +39,6 @@ export function FloatingNav() {
   const navItemsContainerRef = useRef<HTMLDivElement>(null);
   const tl = useRef<gsap.core.Timeline | null>(null);
 
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-    const fab = menuRef.current?.parentElement;
-
-    const handleScroll = () => {
-      if (fab) {
-         if (window.scrollY > lastScrollY && window.scrollY > 100) {
-          // scroll down
-          gsap.to(fab, { y: 100, duration: 0.3, ease: 'power2.out' });
-        } else {
-          // scroll up
-          gsap.to(fab, { y: 0, duration: 0.3, ease: 'power2.out' });
-        }
-        lastScrollY = window.scrollY;
-      }
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-
-  }, []);
   
   useEffect(() => {
     const ctx = gsap.context(() => {
