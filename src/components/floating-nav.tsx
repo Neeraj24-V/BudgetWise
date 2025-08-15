@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/context/auth-context';
 import { Home, LogIn, LogOut, Menu, Settings, UserPlus, X } from 'lucide-react';
 import { gsap } from 'gsap';
+import { cn } from '@/lib/utils';
 
 interface NavItemProps {
   onClick: () => void;
@@ -22,7 +23,7 @@ const NavItem = ({ onClick, icon, label, className }: NavItemProps) => (
     </div>
     <Button
       size="icon"
-      className={`rounded-full h-12 w-12 shadow-lg ${className}`}
+      className={cn('rounded-full h-12 w-12 shadow-lg', className)}
       onClick={onClick}
     >
       {icon}
@@ -114,12 +115,12 @@ export function FloatingNav() {
       {/* Overlay to close menu on click */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
+          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      <div className="fixed bottom-6 right-6 z-50" ref={menuRef}>
+      <div className="fixed bottom-6 right-6 z-50 md:hidden" ref={menuRef}>
         {/* Expanded Menu */}
         <div 
           ref={navItemsContainerRef} 
