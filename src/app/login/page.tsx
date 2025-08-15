@@ -1,13 +1,12 @@
 
 "use client";
 
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { BudgetWiseLogo } from "@/components/logo";
-import { AuthContext } from '@/context/auth-context';
 
 
 export default function LoginPage() {
@@ -16,16 +15,13 @@ export default function LoginPage() {
   const [step, setStep] = useState<'email' | 'otp'>('email');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [devOtp, setDevOtp] = useState(''); // For displaying the dev OTP
-
-  const { checkUserStatus } = useContext(AuthContext);
+  
   const router = useRouter();
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    setDevOtp('');
 
     try {
       const res = await fetch('/api/auth/otp/generate', {
@@ -40,11 +36,6 @@ export default function LoginPage() {
         throw new Error(data.message || 'Failed to generate OTP');
       }
       
-      // In development, we get the OTP back to show it.
-      if (data.otpForDevelopment) {
-          setDevOtp(data.otpForDevelopment);
-      }
-
       setStep('otp');
 
     } catch (err: any) {
@@ -72,8 +63,9 @@ export default function LoginPage() {
         throw new Error(data.message || 'Failed to verify OTP');
       }
 
-      // Refresh user status from context and redirect
-      await checkUserStatus();
+      // Dispatch a custom event to notify the AuthContext that the user has logged in.
+      // This is more reliable than trying to time a context refresh with a redirect.
+      window.dispatchEvent(new Event('loggedIn'));
       router.push('/dashboard');
 
     } catch (err: any) {
@@ -141,12 +133,6 @@ export default function LoginPage() {
                     className="text-center tracking-[0.5em]"
                   />
               </div>
-              {devOtp && (
-                  <div className="text-xs p-2 rounded-md bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200">
-                    <p className="font-bold text-center">Development OTP: {devOtp}</p>
-                    <p className="text-center">This is shown for convenience and would not appear in production.</p>
-                  </div>
-              )}
               {error && <p className="text-destructive text-sm text-center">{error}</p>}
             </CardContent>
             <CardFooter className="flex-col space-y-4">

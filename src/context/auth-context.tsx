@@ -2,7 +2,6 @@
 "use client";
 
 import React, { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 
 interface User {
   id: string;
@@ -34,15 +33,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const checkUserStatus = useCallback(async () => {
     setIsLoading(true);
     try {
-      // This endpoint would be implemented to verify the session cookie
-      // and return user data if valid. We will mock it for now.
-      // In a real app, you would have a GET /api/auth/me endpoint.
-      // For now, let's assume if there's a cookie, we need to verify it,
-      // but we don't have that endpoint yet. So we just set loading to false.
-      // This part will be completed when the 'me' endpoint is built.
-      
-      // We will need a `me` endpoint to make this work across page loads.
-      // For now, logging in will set the user, but refreshing will lose it.
+      const res = await fetch('/api/auth/me');
+
+      if (!res.ok) {
+        throw new Error('Not authenticated');
+      }
+
+      const data = await res.json();
+      setUser(data.user);
+
     } catch (error) {
       setUser(null);
     } finally {
@@ -63,6 +62,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     checkUserStatus();
   }, [checkUserStatus]);
+  
+  // This is a special handler for when the user logs in via OTP.
+  // The login page dispatches this event.
+  useEffect(() => {
+    const handleLoggedIn = () => {
+      checkUserStatus();
+    };
+    window.addEventListener('loggedIn', handleLoggedIn);
+    return () => {
+      window.removeEventListener('loggedIn', handleLoggedIn);
+    }
+  }, [checkUserStatus]);
+
 
   const isAuthenticated = !!user;
 
