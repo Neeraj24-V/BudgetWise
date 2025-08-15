@@ -2,23 +2,63 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { randomInt } from 'crypto';
 import bcrypt from 'bcryptjs';
+import { Resend } from 'resend';
 
-// This is a placeholder for a real email sending service
+// Initialize Resend
+if (!process.env.RESEND_API_KEY) {
+  // Note: This check runs at build time, so the key must be present.
+  // In a real production environment, you'd want to handle this gracefully.
+  console.log('Missing RESEND_API_KEY. OTP emails will not be sent.');
+}
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+
+// This function now sends a real email using Resend.
 async function sendOTPEmail(email: string, otp: string) {
-  // In a production environment, you would use a service like SendGrid, AWS SES, or Resend.
-  // For this example, we'll just log it to the console.
-  console.log(`
-    ================================================
-    SENDING OTP EMAIL (SIMULATED)
-    ------------------------------------------------
-    To: ${email}
-    OTP: ${otp}
-    ------------------------------------------------
-    This is where you'd integrate your email service.
-    For now, use the OTP above to complete the login.
-    ================================================
-  `);
-  return Promise.resolve();
+  if (!process.env.RESEND_API_KEY) {
+    console.error('Resend API Key is not configured. Cannot send email.');
+    // In development, we can fallback to console logging.
+    // In production, this should throw a hard error.
+    console.log(`
+      ================================================
+      SIMULATING OTP EMAIL (Resend not configured)
+      ------------------------------------------------
+      To: ${email}
+      OTP: ${otp}
+      ================================================
+    `);
+    return;
+  }
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'BudgetWise <onboarding@resend.dev>', // Must be from a verified domain on Resend
+      to: [email],
+      subject: `Your BudgetWise Login Code: ${otp}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; text-align: center; color: #333;">
+          <h2>Your One-Time Password</h2>
+          <p>Use the code below to log in to your BudgetWise account.</p>
+          <p style="font-size: 24px; font-weight: bold; letter-spacing: 4px; border: 1px solid #ddd; padding: 15px; display: inline-block;">
+            ${otp}
+          </p>
+          <p>This code will expire in 10 minutes.</p>
+        </div>
+      `,
+    });
+
+    if (error) {
+      console.error('Resend API Error:', error);
+      throw new Error(`Failed to send email: ${error.message}`);
+    }
+
+    console.log('OTP email sent successfully:', data);
+
+  } catch (error) {
+    console.error('Error in sendOTPEmail:', error);
+    // Rethrow to be caught by the main handler
+    throw error;
+  }
 }
 
 export async function POST(request: Request) {
@@ -54,15 +94,11 @@ export async function POST(request: Request) {
       { upsert: true, returnDocument: 'after' }
     );
     
-    // In a real application, you would not send the OTP in the response.
-    // You would send it via email or SMS using a service.
+    // Send the OTP via our new email function
     await sendOTPEmail(email, otp);
 
     return NextResponse.json({ 
-        message: 'OTP has been generated. Check your console for the simulated email.',
-        // The OTP is returned here for development convenience.
-        // DO NOT do this in production.
-        otpForDevelopment: otp 
+        message: 'An OTP has been sent to your email address.',
     }, { status: 200 });
 
   } catch (error) {
