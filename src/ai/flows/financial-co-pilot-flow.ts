@@ -5,46 +5,46 @@
 
 import { ai } from '@/ai/genkit';
 import { getBudgetsTool, getTransactionsTool } from '@/ai/tools/database-tools';
-import { Part } from 'genkit';
+import { Message } from 'genkit';
 import { z } from 'zod';
 
-// Simplified schema for individual messages
-const MessageSchema = z.object({
+// Schema for individual messages in the history
+const HistoryMessageSchema = z.object({
   role: z.enum(['user', 'model']),
   content: z.string(),
 });
 
+// The input schema for the main flow
 const FinancialCoPilotInputSchema = z.object({
-  // History is now an array of simple message objects
-  history: z.array(MessageSchema),
+  history: z.array(HistoryMessageSchema),
   message: z.string(),
 });
 export type FinancialCoPilotInput = z.infer<typeof FinancialCoPilotInputSchema>;
 
-type GenkitMessage = {
-    role: 'user' | 'model' | 'tool';
-    content: Part[];
-};
 
-
+/**
+ * The main server-side flow for the financial co-pilot.
+ * It takes the chat history and a new message, then returns the AI's response.
+ */
 export async function financialCoPilotFlow(input: FinancialCoPilotInput): Promise<string> {
   const { history, message } = input;
 
-  // Map the simplified history to Genkit Message objects.
-  const messages: GenkitMessage[] = history.map(msg => ({
+  // Map the incoming history to the format Genkit expects.
+  // The content of each message must be an array of Parts.
+  const messages: Message[] = history.map(msg => ({
       role: msg.role,
       content: [{ text: msg.content }]
   }));
 
-  // Add the new user message to the history
+  // Add the new user message to the conversation history.
   messages.push({ role: 'user', content: [{ text: message }] });
 
   try {
     const llmResponse = await ai.generate({
-        model: 'gemini-pro',
-        prompt: {
-            messages
-        },
+        // Use the newer, faster, and more cost-effective Flash model
+        model: 'googleai/gemini-1.5-flash-latest', 
+        history: messages.slice(0, -1), // Pass all but the last message as history
+        prompt: messages.slice(-1)[0].content, // Pass the last message as the new prompt
         tools: [getBudgetsTool, getTransactionsTool],
         system: `You are an expert financial co-pilot.
         You can answer questions about the user's finances based on the data available in the tools.
@@ -54,10 +54,9 @@ export async function financialCoPilotFlow(input: FinancialCoPilotInput): Promis
     });
 
     const responseText = llmResponse.text();
-
+    
     if (!responseText) {
       console.error("AI response was empty or invalid.");
-      // Throw an error that the client can catch
       throw new Error("I'm sorry, I received an empty response from the AI. Please try again.");
     }
 
@@ -66,7 +65,6 @@ export async function financialCoPilotFlow(input: FinancialCoPilotInput): Promis
   } catch(e: any) {
     console.error("Error in financialCoPilotFlow:", e);
     // Re-throw the error with a user-friendly message so the client-side can handle it.
-    // This allows the UI to show a proper error state.
     throw new Error(`Sorry, there was an error processing your request on the server. Details: ${e.message}`);
   }
 }

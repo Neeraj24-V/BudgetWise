@@ -22,7 +22,7 @@ import { financialCoPilotFlow, FinancialCoPilotInput } from '@/ai/flows/financia
 interface Message {
   id: string;
   role: 'user' | 'model';
-  content: string; // Simplified content to a string
+  content: string; 
 }
 
 
@@ -81,7 +81,7 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
       // The history for the AI should be in the simplified format
       const historyForAI = messages.map(m => ({
         role: m.role,
-        content: m.content, // Content is now just a string
+        content: m.content,
       }));
 
       const flowInput: FinancialCoPilotInput = {
@@ -772,23 +772,23 @@ export default function DashboardPage() {
       />
 
       {/* Floating Chat Button */}
-      {!isChatOpen && (
-        <Button
-          onClick={() => setIsChatOpen(true)}
-          className="fixed bottom-8 right-8 h-16 w-16 rounded-full shadow-lg z-50"
-          size="icon"
-        >
-          <Bot className="h-8 w-8" />
-          <span className="sr-only">Open Chat</span>
-        </Button>
-      )}
+      <div className="fixed bottom-8 right-8 z-50">
+          {!isChatOpen && (
+              <Button
+                  onClick={() => setIsChatOpen(true)}
+                  className="h-16 w-16 rounded-full shadow-lg"
+                  size="icon"
+              >
+                  <Bot className="h-8 w-8" />
+                  <span className="sr-only">Open Chat</span>
+              </Button>
+          )}
 
-      {/* Chat Popup */}
-      {isChatOpen && (
-        <div className="fixed bottom-8 right-8 z-50">
-          <ChatInterface onClose={() => setIsChatOpen(false)} />
-        </div>
-      )}
+          {/* Chat Popup */}
+          {isChatOpen && (
+              <ChatInterface onClose={() => setIsChatOpen(false)} />
+          )}
+      </div>
     </div>
   );
 }
