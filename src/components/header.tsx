@@ -4,7 +4,6 @@
 import { ThemeToggle } from "@/components/theme-toggle";
 import Link from 'next/link';
 import { BudgetWiseLogo } from './logo';
-import { AuthComponents } from "./auth-components";
 
 
 export function Header() {
@@ -16,7 +15,6 @@ export function Header() {
                 <span className="font-bold inline-block">BudgetWise</span>
             </Link>
             <div className="flex flex-1 items-center justify-end space-x-4">
-              <AuthComponents />
               <ThemeToggle />
             </div>
         </div>

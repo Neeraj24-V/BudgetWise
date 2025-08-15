@@ -7,9 +7,15 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
 import { CurrencyProvider } from "@/context/currency-context";
 import { AuthProvider } from "@/context/auth-context";
+import { FloatingNav } from "@/components/floating-nav";
 
 
-const orbitron = Orbitron({ subsets: ["latin"], variable: "--font-sans" });
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
 
 export const metadata: Metadata = {
   title: "BudgetWise - The Smart Expense Tracker",
@@ -34,6 +40,7 @@ export default function RootLayout({
                 <CurrencyProvider>
                   <Header />
                   {children}
+                  <FloatingNav />
                 </CurrencyProvider>
             </ThemeProvider>
         </AuthProvider>
