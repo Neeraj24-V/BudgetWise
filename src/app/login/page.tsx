@@ -96,19 +96,10 @@ function LoginPageContent() {
       if (!res.ok) {
         throw new Error(data.message || `Failed to ${isLoginView ? 'login' : 'register'}`);
       }
-
-      if (isLoginView) {
-        window.dispatchEvent(new Event('loggedIn'));
-        router.push('/dashboard');
-      } else {
-        // After successful registration, switch to the login view
-        setIsLoginView(true);
-        setError('Registration successful! Please sign in.');
-        // Clear registration form fields
-        setName('');
-        setEmail('');
-        setPassword('');
-      }
+      
+      // For both login and registration, we now expect user data and will redirect.
+      window.dispatchEvent(new Event('loggedIn'));
+      router.push('/dashboard');
 
     } catch (err: any) {
       setError(err.message);

@@ -2,6 +2,13 @@
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
+
+if (!process.env.JWT_SECRET) {
+  throw new Error('Please define the JWT_SECRET environment variable inside .env');
+}
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Regular expression for email validation
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -12,8 +19,6 @@ const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]
 export async function POST(request: Request) {
   try {
     const { name, email, password } = await request.json();
-
-    // --- Start of New Validation ---
 
     if (!name || !email || !password) {
       return NextResponse.json({ message: 'Name, email, and password are required' }, { status: 400 });
@@ -28,8 +33,6 @@ export async function POST(request: Request) {
         message: 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.' 
       }, { status: 400 });
     }
-
-    // --- End of New Validation ---
 
     const { db } = await connectToDatabase();
     
@@ -49,8 +52,39 @@ export async function POST(request: Request) {
     };
 
     const result = await db.collection('users').insertOne(newUser);
+    const createdUser = await db.collection('users').findOne({ _id: result.insertedId });
     
-    return NextResponse.json({ message: 'User created successfully', userId: result.insertedId }, { status: 201 });
+    if (!createdUser) {
+        return NextResponse.json({ message: 'Could not find user after creation' }, { status: 500 });
+    }
+
+    // --- Start of New Auto-Login Logic ---
+    
+    // Create JWT token
+    const token = jwt.sign(
+      { 
+        userId: createdUser._id.toHexString(),
+        email: createdUser.email,
+        name: createdUser.name
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    // Set token in an httpOnly cookie
+    cookies().set('session-token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 7, // 1 week
+      path: '/',
+    });
+    
+    // Return user data (without password)
+    const { _id, currency } = createdUser;
+    const userData = { id: _id.toHexString(), email, name, currency };
+
+    return NextResponse.json({ message: 'User created and logged in successfully', user: userData }, { status: 201 });
+    // --- End of New Auto-Login Logic ---
 
   } catch (error) {
     console.error('Registration Error:', error);
