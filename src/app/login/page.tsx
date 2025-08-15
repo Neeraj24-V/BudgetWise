@@ -1,12 +1,22 @@
 
 "use client";
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { BudgetWiseLogo } from "@/components/logo";
+
+// Simple debounce function
+function debounce<T extends (...args: any[]) => void>(func: T, wait: number): (...args: Parameters<T>) => void {
+    let timeout: NodeJS.Timeout;
+    return function(...args: Parameters<T>) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), wait);
+    };
+}
+
 
 function LoginPageContent() {
   const router = useRouter();
@@ -20,9 +30,51 @@ function LoginPageContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // State for email existence check
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+  const [emailCheckResult, setEmailCheckResult] = useState<'available' | 'exists' | 'error' | null>(null);
+
   useEffect(() => {
     setIsLoginView(view !== 'register');
   }, [view]);
+
+  // Debounced email check function
+  const checkEmailExists = useCallback(
+    debounce(async (emailValue: string) => {
+      // Basic email format validation before checking
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+        setEmailCheckResult(null); // Clear result if format is invalid
+        return;
+      }
+      setIsCheckingEmail(true);
+      setEmailCheckResult(null);
+      try {
+        const res = await fetch('/api/auth/check-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailValue }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Failed to check email');
+        
+        setEmailCheckResult(data.exists ? 'exists' : 'available');
+      } catch (err) {
+        setEmailCheckResult('error');
+      } finally {
+        setIsCheckingEmail(false);
+      }
+    }, 500), // 500ms delay
+    []
+  );
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    if (!isLoginView) { // Only check email when on the register view
+      checkEmailExists(newEmail);
+    }
+  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,6 +117,28 @@ function LoginPageContent() {
     }
   };
 
+  const getEmailCheckMessage = () => {
+    if (isLoginView) return null;
+
+    if (isCheckingEmail) {
+      return <p className="text-xs text-muted-foreground mt-1">Checking...</p>;
+    }
+
+    if (emailCheckResult === 'exists') {
+      return <p className="text-xs text-destructive mt-1">Email already in use. Try signing in.</p>;
+    }
+
+    if (emailCheckResult === 'available') {
+      return <p className="text-xs text-green-500 mt-1">Email is available!</p>;
+    }
+    
+    if(emailCheckResult === 'error') {
+       return <p className="text-xs text-destructive mt-1">Could not verify email. Please try again.</p>;
+    }
+
+    return null;
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-sm">
@@ -98,10 +172,11 @@ function LoginPageContent() {
                 type="email"
                 placeholder="name@example.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
                 required
                 disabled={isLoading}
               />
+               {getEmailCheckMessage()}
             </div>
             <div className="space-y-2">
               <label htmlFor="password">Password</label>
@@ -118,10 +193,10 @@ function LoginPageContent() {
             {error && <p className="text-sm text-center" style={{ color: error.includes('successful') ? 'green' : 'hsl(var(--destructive))' }}>{error}</p>}
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading || (emailCheckResult === 'exists' && !isLoginView)}>
               {isLoading ? 'Processing...' : (isLoginView ? 'Sign In' : 'Create Account')}
             </Button>
-            <Button variant="link" size="sm" type="button" onClick={() => { setIsLoginView(!isLoginView); setError(null); }}>
+            <Button variant="link" size="sm" type="button" onClick={() => { setIsLoginView(!isLoginView); setError(null); setEmailCheckResult(null); }}>
               {isLoginView ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
             </Button>
           </CardFooter>
