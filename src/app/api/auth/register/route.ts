@@ -2,19 +2,34 @@
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import bcrypt from 'bcryptjs';
-import { randomInt } from 'crypto';
+
+// Regular expression for email validation
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Regular expression for password validation (at least 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char)
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+
 
 export async function POST(request: Request) {
   try {
     const { name, email, password } = await request.json();
 
-    if (!email || !password || !name) {
+    // --- Start of New Validation ---
+
+    if (!name || !email || !password) {
       return NextResponse.json({ message: 'Name, email, and password are required' }, { status: 400 });
     }
-
-    if (password.length < 6) {
-        return NextResponse.json({ message: 'Password must be at least 6 characters long' }, { status: 400 });
+    
+    if (!EMAIL_REGEX.test(email)) {
+        return NextResponse.json({ message: 'Please enter a valid email address' }, { status: 400 });
     }
+
+    if (!PASSWORD_REGEX.test(password)) {
+      return NextResponse.json({ 
+        message: 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.' 
+      }, { status: 400 });
+    }
+
+    // --- End of New Validation ---
 
     const { db } = await connectToDatabase();
     
@@ -35,9 +50,6 @@ export async function POST(request: Request) {
 
     const result = await db.collection('users').insertOne(newUser);
     
-    // We don't sign them in automatically, they have to go to the login page.
-    // This is a common pattern.
-
     return NextResponse.json({ message: 'User created successfully', userId: result.insertedId }, { status: 201 });
 
   } catch (error) {
