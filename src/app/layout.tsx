@@ -10,7 +10,7 @@ import { AuthProvider } from "@/context/auth-context";
 
 
 const anurati = localFont({
-  src: '../../public/fonts/anurati.otf',
+  src: '../fonts/anurati.otf',
   variable: '--font-sans',
   display: 'swap',
 });
