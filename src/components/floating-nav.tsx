@@ -35,8 +35,31 @@ export function FloatingNav() {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated, logout } = useContext(AuthContext);
   const router = useRouter();
-  const menuRef = useRef(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const navItemsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    // Hide nav on scroll down, show on scroll up
+    let lastScrollY = window.scrollY;
+    const fab = menuRef.current?.parentElement;
+
+    const handleScroll = () => {
+      if (fab) {
+         if (window.scrollY > lastScrollY) {
+          // scroll down
+          gsap.to(fab, { y: 100, duration: 0.3, ease: 'power2.out' });
+        } else {
+          // scroll up
+          gsap.to(fab, { y: 0, duration: 0.3, ease: 'power2.out' });
+        }
+        lastScrollY = window.scrollY;
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -46,7 +69,10 @@ export function FloatingNav() {
         { y: 0, opacity: 1, duration: 0.3, stagger: 0.05, delay: 0.1 }
       );
     } else {
-      gsap.to(menuRef.current, { scale: 0.8, opacity: 0, duration: 0.2 });
+       if (menuRef.current) {
+         gsap.to(navItemsRef.current, { y: 20, opacity: 0, duration: 0.2, stagger: 0.05 });
+         gsap.to(menuRef.current, { scale: 0.8, opacity: 0, duration: 0.2, delay: 0.2 });
+      }
     }
   }, [isOpen]);
 
@@ -104,15 +130,17 @@ export function FloatingNav() {
 
       <div className="fixed bottom-6 right-6 z-50">
         {/* Expanded Menu */}
-        {isOpen && (
-           <div ref={menuRef} className="flex flex-col items-end space-y-3 opacity-0 scale-90">
-                {navItems.map((item, index) => (
-                    <div ref={el => navItemsRef.current[index] = el} key={item.label}>
-                       <NavItem {...item} />
-                    </div>
-                ))}
-            </div>
-        )}
+        <div 
+          ref={menuRef} 
+          className="flex flex-col items-end space-y-3 opacity-0 scale-90"
+          style={{ transformOrigin: 'bottom right' }}
+         >
+              {isOpen && navItems.map((item, index) => (
+                  <div ref={el => navItemsRef.current[index] = el} key={item.label}>
+                     <NavItem {...item} />
+                  </div>
+              ))}
+          </div>
 
         {/* Main Floating Action Button (FAB) */}
         <div className="flex justify-end mt-4">
@@ -130,3 +158,5 @@ export function FloatingNav() {
     </>
   );
 }
+
+    

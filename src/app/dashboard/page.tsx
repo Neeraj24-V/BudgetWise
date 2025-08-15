@@ -481,27 +481,27 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <main className="container mx-auto p-4 sm:p-6 lg:p-8">
-        <Card className="mb-6">
+      <main className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        <Card>
           <CardHeader>
               <CardTitle>Financial Summary</CardTitle>
               <CardDescription>An overview of your financial health and trends.</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="monthly" className="w-full">
-              <div className="flex justify-between items-start">
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                   <TabsList>
                       <TabsTrigger value="weekly">Weekly</TabsTrigger>
                       <TabsTrigger value="monthly">Monthly</TabsTrigger>
                       <TabsTrigger value="yearly">Yearly</TabsTrigger>
                   </TabsList>
-                  <div className="space-y-1 text-right">
+                  <div className="space-y-1 text-left sm:text-right w-full sm:w-auto">
                     <p className="text-sm text-muted-foreground">Total Spent (This Month)</p>
                     <p className="text-2xl font-bold">{currencySymbol}{totalSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                   </div>
               </div>
               <TabsContent value="weekly">
-                  <div className="h-[250px] w-full">
+                  <div className="h-[250px] w-full mt-4">
                       <ResponsiveContainer width="100%" height="100%">
                           <AreaChart data={weeklyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                               <defs>
@@ -520,7 +520,7 @@ export default function DashboardPage() {
                   </div>
               </TabsContent>
               <TabsContent value="monthly">
-                  <div className="h-[250px] w-full">
+                  <div className="h-[250px] w-full mt-4">
                        <ResponsiveContainer width="100%" height="100%">
                           <BarChart data={monthlyData}>
                               <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
@@ -532,7 +532,7 @@ export default function DashboardPage() {
                   </div>
               </TabsContent>
                <TabsContent value="yearly">
-                  <div className="h-[250px] flex items-center justify-center">
+                  <div className="h-[250px] flex items-center justify-center mt-4">
                     <p className="text-muted-foreground">Yearly chart coming soon!</p>
                   </div>
               </TabsContent>
@@ -585,13 +585,13 @@ export default function DashboardPage() {
           </TabsList>
 
           <TabsContent value="budget">
-             <Card className="mb-6">
+             <Card>
                 <CardHeader>
                     <CardTitle>Monthly Budget Overview</CardTitle>
                     <CardDescription>Your financial command center for the month.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                         <div>
                             <p className="text-muted-foreground text-sm">Total Budget</p>
                             <p className="text-2xl font-bold">{currencySymbol}{totalBudget.toLocaleString()}</p>
@@ -609,7 +609,7 @@ export default function DashboardPage() {
                 </CardContent>
             </Card>
 
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2 mt-6">
                 {Array.isArray(budgetCategories) && budgetCategories.map(category => (
                     <Card key={category._id}>
                         <CardHeader className="flex flex-row items-center justify-between">
@@ -773,7 +773,7 @@ export default function DashboardPage() {
       {!isChatOpen && (
         <Button
           onClick={() => setIsChatOpen(true)}
-          className="fixed bottom-8 right-8 h-16 w-16 rounded-full shadow-lg"
+          className="fixed bottom-24 right-6 h-16 w-16 rounded-full shadow-lg"
           size="icon"
         >
           <Bot className="h-8 w-8" />
@@ -790,3 +790,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
