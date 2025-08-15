@@ -9,49 +9,22 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CurrencyContext, Currency } from '@/context/currency-context';
-import { useSession } from 'next-auth/react';
 
 export default function SettingsPage() {
-    const { data: session } = useSession();
     const { currency, setCurrency } = useContext(CurrencyContext);
     
     const [name, setName] = useState('Guest User');
     const [email, setEmail] = useState('guest@example.com');
 
-    useEffect(() => {
-        if (session?.user) {
-            setName(session.user.name ?? 'Guest User');
-            setEmail(session.user.email ?? 'guest@example.com');
-        }
-    }, [session]);
-
-
+    // Dummy handler
     const handleProfileUpdate = () => {
-        alert('Profile updates are handled via your Google account.');
+        alert('Profile updates will be available soon.');
     };
 
+    // Dummy handler
     const handleCurrencyChange = async (newCurrency: Currency) => {
-        setCurrency(newCurrency); // Update context immediately for UI responsiveness
-        if (!session?.user?.id) {
-            alert("You must be logged in to save your preference.");
-            return;
-        }
-
-        try {
-            const response = await fetch('/api/user', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ currency: newCurrency, userId: session.user.id }),
-            });
-            if (!response.ok) {
-                throw new Error("Failed to save currency preference.");
-            }
-            alert("Currency preference saved.");
-        } catch (error) {
-            console.error(error);
-            alert("Could not save your currency preference. Please try again.");
-            // Optional: revert local state if API call fails
-        }
+        setCurrency(newCurrency); 
+        alert("Currency preference will be saved for logged-in users.");
     }
 
   return (
@@ -67,12 +40,12 @@ export default function SettingsPage() {
             <CardContent className="space-y-6">
               <div className="flex items-center space-x-6">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src={session?.user?.image ?? "https://placehold.co/100x100.png"} alt="User profile picture" data-ai-hint="person portrait" />
-                  <AvatarFallback>{name?.charAt(0)}</AvatarFallback>
+                  <AvatarImage src={"https://placehold.co/100x100.png"} alt="User profile picture" data-ai-hint="person portrait" />
+                  <AvatarFallback>G</AvatarFallback>
                 </Avatar>
                 <div className="space-y-2">
                     <label htmlFor="picture" className="text-sm font-medium leading-none">Profile Picture</label>
-                    <p className="text-xs text-muted-foreground">Your profile picture is managed by your Google account.</p>
+                    <p className="text-xs text-muted-foreground">Your profile picture is managed by your account.</p>
                 </div>
               </div>
               <div className="space-y-2">

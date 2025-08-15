@@ -2,7 +2,6 @@
 "use client";
 
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { useSession } from 'next-auth/react';
 
 export type Currency = 'USD' | 'EUR' | 'GBP' | 'JPY' | 'INR';
 type CurrencySymbol = '$' | '€' | '£' | '¥' | '₹';
@@ -26,21 +25,18 @@ export const CurrencyContext = createContext<CurrencyContextType>({
     currency: 'USD',
     currencySymbol: '$',
     setCurrency: () => {},
-    isLoading: true,
+    isLoading: false,
 });
 
 export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
-    const { data: session, status } = useSession();
     const [currency, setCurrency] = useState<Currency>('USD');
-    const isLoading = status === 'loading';
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // @ts-ignore
-        const userCurrency = session?.user?.currency;
-        if (userCurrency && currencySymbols[userCurrency]) {
-            setCurrency(userCurrency);
-        }
-    }, [session]);
+        // In a real app, you might load this from localStorage or an API
+        setCurrency('USD');
+        setIsLoading(false);
+    }, []);
     
     const currencySymbol = currencySymbols[currency] || '$';
 
