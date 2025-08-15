@@ -76,7 +76,7 @@ export function AuthComponents() {
                       Login
                   </Button>
                 </Link>
-                <Link href="/login" passHref>
+                <Link href="/login?view=register" passHref>
                   <Button>
                       <UserPlus className="w-4 h-4 mr-2" />
                       Register

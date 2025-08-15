@@ -1,23 +1,28 @@
 
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { BudgetWiseLogo } from "@/components/logo";
-import { cn } from '@/lib/utils';
 
-export default function LoginPage() {
-  const [isLoginView, setIsLoginView] = useState(true);
+function LoginPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const view = searchParams.get('view');
+
+  const [isLoginView, setIsLoginView] = useState(view !== 'register');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  const router = useRouter();
+
+  useEffect(() => {
+    setIsLoginView(view !== 'register');
+  }, [view]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,10 +44,19 @@ export default function LoginPage() {
       if (!res.ok) {
         throw new Error(data.message || `Failed to ${isLoginView ? 'login' : 'register'}`);
       }
-      
-      // Notify context and redirect
-      window.dispatchEvent(new Event('loggedIn'));
-      router.push('/dashboard');
+
+      if (isLoginView) {
+        window.dispatchEvent(new Event('loggedIn'));
+        router.push('/dashboard');
+      } else {
+        // After successful registration, switch to the login view
+        setIsLoginView(true);
+        setError('Registration successful! Please sign in.');
+        // Clear registration form fields
+        setName('');
+        setEmail('');
+        setPassword('');
+      }
 
     } catch (err: any) {
       setError(err.message);
@@ -56,9 +70,9 @@ export default function LoginPage() {
       <Card className="w-full max-w-sm">
         <form onSubmit={handleSubmit}>
           <CardHeader className="text-center">
-              <div className="flex justify-center items-center mb-4">
-                  <BudgetWiseLogo className="h-8 w-8 text-primary" />
-              </div>
+            <div className="flex justify-center items-center mb-4">
+              <BudgetWiseLogo className="h-8 w-8 text-primary" />
+            </div>
             <CardTitle>{isLoginView ? 'Welcome Back!' : 'Create an Account'}</CardTitle>
             <CardDescription>{isLoginView ? 'Sign in to access your dashboard.' : 'Enter your details to get started.'}</CardDescription>
           </CardHeader>
@@ -89,19 +103,19 @@ export default function LoginPage() {
                 disabled={isLoading}
               />
             </div>
-             <div className="space-y-2">
-                <label htmlFor="password">Password</label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
-              </div>
-            {error && <p className="text-destructive text-sm text-center">{error}</p>}
+            <div className="space-y-2">
+              <label htmlFor="password">Password</label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={isLoading}
+              />
+            </div>
+            {error && <p className="text-sm text-center" style={{ color: error.includes('successful') ? 'green' : 'hsl(var(--destructive))' }}>{error}</p>}
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full" disabled={isLoading}>
@@ -114,5 +128,13 @@ export default function LoginPage() {
         </form>
       </Card>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginPageContent />
+    </Suspense>
   );
 }
