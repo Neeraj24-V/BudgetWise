@@ -7,7 +7,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
 import { CurrencyProvider } from "@/context/currency-context";
 import { AuthProvider } from "@/context/auth-context";
-import { MobileDrawer } from "@/components/mobile-drawer";
 
 
 const orbitron = Orbitron({
@@ -40,7 +39,6 @@ export default function RootLayout({
                 <CurrencyProvider>
                   <Header />
                   {children}
-                  <MobileDrawer />
                 </CurrencyProvider>
             </ThemeProvider>
         </AuthProvider>
