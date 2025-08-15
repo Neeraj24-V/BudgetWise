@@ -32,7 +32,7 @@ async function sendOTPEmail(email: string, otp: string) {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: 'Acme <onboarding@resend.dev>', // Must be from a verified domain on Resend
+      from: 'BudgetWise <onboarding@finflow.example.com>', // Must be from a verified domain on Resend
       to: [email],
       subject: `Your BudgetWise Login Code: ${otp}`,
       html: `
