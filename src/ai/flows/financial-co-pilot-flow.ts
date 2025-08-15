@@ -41,10 +41,8 @@ export async function financialCoPilotFlow(input: FinancialCoPilotInput): Promis
 
   try {
     const llmResponse = await ai.generate({
-        // Use the newer, faster, and more cost-effective Flash model
         model: 'googleai/gemini-1.5-flash-latest', 
-        history: messages.slice(0, -1), // Pass all but the last message as history
-        prompt: messages.slice(-1)[0].content, // Pass the last message as the new prompt
+        history: messages, // Pass the entire conversation history
         tools: [getBudgetsTool, getTransactionsTool],
         system: `You are an expert financial co-pilot.
         You can answer questions about the user's finances based on the data available in the tools.
