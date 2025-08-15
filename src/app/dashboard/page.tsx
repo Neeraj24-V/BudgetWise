@@ -112,7 +112,7 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <Card className="flex flex-col h-[60vh] w-full max-w-lg shadow-2xl">
+    <Card className="flex flex-col h-[70vh] w-[90vw] max-w-lg shadow-2xl">
       <CardHeader className="flex flex-row items-center justify-between border-b">
         <div className="flex items-center space-x-3">
           <Avatar className="h-10 w-10 border">
@@ -622,10 +622,12 @@ export default function DashboardPage() {
                                     <CardDescription>{currencySymbol}{category.spent.toLocaleString()} of {currencySymbol}{category.budget.toLocaleString()}</CardDescription>
                                 </div>
                             </div>
-                            <Button size="sm" variant="outline" onClick={() => handleAddExpenseClick(category.name)} className="w-full sm:w-auto flex-shrink-0">
-                                <PlusCircle className="w-4 h-4 mr-2" />
-                                Add Expense
-                            </Button>
+                            <div className="w-full sm:w-auto flex-shrink-0">
+                                <Button size="sm" variant="outline" onClick={() => handleAddExpenseClick(category.name)} className="w-full">
+                                    <PlusCircle className="w-4 h-4 mr-2" />
+                                    Add Expense
+                                </Button>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <Progress value={(category.budget > 0 ? (category.spent / category.budget) * 100 : 0)} className="mb-4 h-2" />
@@ -773,7 +775,7 @@ export default function DashboardPage() {
       {!isChatOpen && (
         <Button
           onClick={() => setIsChatOpen(true)}
-          className="fixed bottom-28 right-6 h-16 w-16 rounded-full shadow-lg z-50 md:hidden"
+          className="fixed bottom-8 right-8 h-16 w-16 rounded-full shadow-lg z-50"
           size="icon"
         >
           <Bot className="h-8 w-8" />
@@ -783,12 +785,10 @@ export default function DashboardPage() {
 
       {/* Chat Popup */}
       {isChatOpen && (
-        <div className="fixed bottom-8 right-8 z-50 md:hidden">
+        <div className="fixed bottom-8 right-8 z-50">
           <ChatInterface onClose={() => setIsChatOpen(false)} />
         </div>
       )}
     </div>
   );
 }
-
-    
