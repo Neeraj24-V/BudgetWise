@@ -4,7 +4,7 @@
 import { useContext } from 'react';
 import { Button } from './ui/button';
 import Link from 'next/link';
-import { LogIn, LogOut } from 'lucide-react';
+import { LogIn, LogOut, UserPlus } from 'lucide-react';
 import { AuthContext } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback } from './ui/avatar';
@@ -69,12 +69,20 @@ export function AuthComponents() {
             </DropdownMenu>
           </>
         ) : (
-            <Link href="/login" passHref>
-              <Button variant="ghost">
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Login
-              </Button>
-            </Link>
+            <>
+                <Link href="/login" passHref>
+                  <Button variant="ghost">
+                      <LogIn className="w-4 h-4 mr-2" />
+                      Login
+                  </Button>
+                </Link>
+                <Link href="/login" passHref>
+                  <Button>
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Register
+                  </Button>
+                </Link>
+            </>
         )}
     </nav>
   );
