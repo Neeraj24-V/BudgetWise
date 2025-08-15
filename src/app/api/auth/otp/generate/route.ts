@@ -4,35 +4,23 @@ import { randomInt } from 'crypto';
 import bcrypt from 'bcryptjs';
 import { Resend } from 'resend';
 
-// Initialize Resend
-if (!process.env.RESEND_API_KEY) {
-  // Note: This check runs at build time, so the key must be present.
-  // In a real production environment, you'd want to handle this gracefully.
-  console.log('Missing RESEND_API_KEY. OTP emails will not be sent.');
-}
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-
 // This function now sends a real email using Resend.
 async function sendOTPEmail(email: string, otp: string) {
-  if (!process.env.RESEND_API_KEY) {
+  // Moved Resend initialization inside the function to ensure API key is present.
+  const resendApiKey = process.env.RESEND_API_KEY;
+
+  if (!resendApiKey) {
     console.error('Resend API Key is not configured. Cannot send email.');
-    // In development, we can fallback to console logging.
-    // In production, this should throw a hard error.
-    console.log(`
-      ================================================
-      SIMULATING OTP EMAIL (Resend not configured)
-      ------------------------------------------------
-      To: ${email}
-      OTP: ${otp}
-      ================================================
-    `);
-    return;
+    // In a real production environment, you would want this to be a hard failure.
+    // For development, we can log and fallback, but here we will throw to make the issue clear.
+    throw new Error('Server is not configured to send emails. Missing RESEND_API_KEY.');
   }
+  
+  const resend = new Resend(resendApiKey);
 
   try {
     const { data, error } = await resend.emails.send({
-      from: 'BudgetWise <onboarding@finflow.example.com>', // Must be from a verified domain on Resend
+      from: 'BudgetWise <onboarding@finflow.example.com>', // Using your verified domain
       to: [email],
       subject: `Your BudgetWise Login Code: ${otp}`,
       html: `
@@ -48,14 +36,15 @@ async function sendOTPEmail(email: string, otp: string) {
     });
 
     if (error) {
-      console.error('Resend API Error:', error);
-      throw new Error(`Failed to send email: ${error.message}`);
+      // Log the detailed error from Resend
+      console.error('Resend API Error:', JSON.stringify(error, null, 2));
+      throw new Error(`Failed to send email via Resend: ${error.message}`);
     }
 
-    console.log('OTP email sent successfully:', data);
+    console.log('OTP email sent successfully via Resend:', data);
 
   } catch (error) {
-    console.error('Error in sendOTPEmail:', error);
+    console.error('Error in sendOTPEmail function:', error);
     // Rethrow to be caught by the main handler
     throw error;
   }
@@ -77,7 +66,7 @@ export async function POST(request: Request) {
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
 
     // Find user or create a new one
-    const user = await db.collection('users').findOneAndUpdate(
+    await db.collection('users').findOneAndUpdate(
       { email },
       { 
         $set: { 
@@ -94,15 +83,17 @@ export async function POST(request: Request) {
       { upsert: true, returnDocument: 'after' }
     );
     
-    // Send the OTP via our new email function
+    // Send the OTP via our email function
     await sendOTPEmail(email, otp);
 
     return NextResponse.json({ 
         message: 'An OTP has been sent to your email address.',
     }, { status: 200 });
 
-  } catch (error) {
-    console.error('OTP Generation Error:', error);
-    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+  } catch (error: any) {
+    // Log the detailed error to the server console
+    console.error('OTP Generation API Error:', error);
+    // Return a generic error message to the client for security
+    return NextResponse.json({ message: `Internal server error: ${error.message}` }, { status: 500 });
   }
 }
