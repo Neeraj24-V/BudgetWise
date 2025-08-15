@@ -113,11 +113,11 @@ export default function Home() {
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 hero-element" style={{animationDelay: '1s'}}>
               Go beyond simple logs. BudgetWise uses AI to help you save smarter, achieve your goals, and build a better financial future.
             </p>
-            <div className="space-x-4 hero-element">
-              <button className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-md font-semibold">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 hero-element">
+              <button className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-md font-semibold w-full sm:w-auto">
                 Get Started for Free
               </button>
-              <button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 py-3 rounded-md font-semibold">
+              <button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 py-3 rounded-md font-semibold w-full sm:w-auto">
                 See it in Action
               </button>
             </div>

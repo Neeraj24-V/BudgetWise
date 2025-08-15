@@ -612,7 +612,7 @@ export default function DashboardPage() {
             <div className="grid gap-6 md:grid-cols-2 mt-6">
                 {Array.isArray(budgetCategories) && budgetCategories.map(category => (
                     <Card key={category._id}>
-                        <CardHeader className="flex flex-row items-center justify-between">
+                        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                             <div className="flex items-center space-x-4">
                                 <div className="p-3 bg-secondary rounded-full">
                                     {iconComponents[category.icon] || <DollarSign className="w-6 h-6" />}
@@ -622,7 +622,7 @@ export default function DashboardPage() {
                                     <CardDescription>{currencySymbol}{category.spent.toLocaleString()} of {currencySymbol}{category.budget.toLocaleString()}</CardDescription>
                                 </div>
                             </div>
-                            <Button size="sm" variant="outline" onClick={() => handleAddExpenseClick(category.name)}>
+                            <Button size="sm" variant="outline" onClick={() => handleAddExpenseClick(category.name)} className="w-full sm:w-auto flex-shrink-0">
                                 <PlusCircle className="w-4 h-4 mr-2" />
                                 Add Expense
                             </Button>
