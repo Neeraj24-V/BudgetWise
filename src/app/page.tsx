@@ -22,6 +22,18 @@ export default function Home() {
         stagger: 0.2,
         ease: "power3.out",
       });
+      
+      gsap.from(".video-section-element", {
+        opacity: 0,
+        y: 30,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".video-section",
+          start: "top 80%",
+          end: "top 50%",
+          scrub: 1,
+        }
+      });
 
       const cards = gsap.utils.toArray('.feature-card');
       cards.forEach((card, index) => {
@@ -108,6 +120,28 @@ export default function Home() {
               <button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 py-3 rounded-md font-semibold">
                 See it in Action
               </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Video Section */}
+        <section className="py-20 md:py-32 video-section">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12 md:mb-16 video-section-element">
+              <h2 className="text-3xl md:text-4xl font-bold">
+                See BudgetWise in Action
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
+                Watch a quick overview of how our key features can transform your financial life.
+              </p>
+            </div>
+            <div className="max-w-4xl mx-auto video-section-element">
+                <div className="aspect-video bg-card rounded-lg shadow-2xl border overflow-hidden">
+                    <video className="w-full h-full" controls poster="https://placehold.co/1920x1080.png" data-ai-hint="finance dashboard">
+                        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
             </div>
           </div>
         </section>
