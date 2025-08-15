@@ -1,7 +1,8 @@
 
 "use client";
 
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
+import { AuthContext } from './auth-context';
 
 export type Currency = 'USD' | 'EUR' | 'GBP' | 'JPY' | 'INR';
 type CurrencySymbol = '$' | '€' | '£' | '¥' | '₹';
@@ -25,18 +26,25 @@ export const CurrencyContext = createContext<CurrencyContextType>({
     currency: 'USD',
     currencySymbol: '$',
     setCurrency: () => {},
-    isLoading: false,
+    isLoading: true,
 });
 
 export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
     const [currency, setCurrency] = useState<Currency>('USD');
     const [isLoading, setIsLoading] = useState(true);
+    const { user, isLoading: isAuthLoading } = useContext(AuthContext);
 
     useEffect(() => {
-        // In a real app, you might load this from localStorage or an API
-        setCurrency('USD');
-        setIsLoading(false);
-    }, []);
+        if (!isAuthLoading) {
+            if (user && user.currency) {
+                setCurrency(user.currency as Currency);
+            } else {
+                // Default for guests or users without a preference set
+                setCurrency('USD');
+            }
+            setIsLoading(false);
+        }
+    }, [user, isAuthLoading]);
     
     const currencySymbol = currencySymbols[currency] || '$';
 

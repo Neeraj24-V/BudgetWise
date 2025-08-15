@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
 import { CurrencyProvider } from "@/context/currency-context";
-import { Providers } from "@/components/providers";
+import { AuthProvider } from "@/context/auth-context";
 
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn("min-h-screen bg-background font-sans antialiased", inter.variable)}>
-        <Providers>
+        <AuthProvider>
             <ThemeProvider
                 attribute="class"
                 defaultTheme="dark"
@@ -36,7 +36,7 @@ export default function RootLayout({
                   {children}
                 </CurrencyProvider>
             </ThemeProvider>
-        </Providers>
+        </AuthProvider>
       </body>
     </html>
   );

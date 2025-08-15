@@ -1,26 +1,164 @@
 
 "use client";
 
+import { useState, useContext } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { BudgetWiseLogo } from "@/components/logo";
-import Link from "next/link";
+import { AuthContext } from '@/context/auth-context';
+
 
 export default function LoginPage() {
-  
+  const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const [step, setStep] = useState<'email' | 'otp'>('email');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [devOtp, setDevOtp] = useState(''); // For displaying the dev OTP
+
+  const { checkUserStatus } = useContext(AuthContext);
+  const router = useRouter();
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+    setDevOtp('');
+
+    try {
+      const res = await fetch('/api/auth/otp/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to generate OTP');
+      }
+      
+      // In development, we get the OTP back to show it.
+      if (data.otpForDevelopment) {
+          setDevOtp(data.otpForDevelopment);
+      }
+
+      setStep('otp');
+
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/auth/otp/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp }),
+      });
+
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to verify OTP');
+      }
+
+      // Refresh user status from context and redirect
+      await checkUserStatus();
+      router.push('/dashboard');
+
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-            <div className="flex justify-center items-center mb-4">
-                <BudgetWiseLogo className="h-8 w-8 text-primary" />
-            </div>
-          <CardTitle>Welcome to BudgetWise</CardTitle>
-          <CardDescription>Sign in to access your financial dashboard.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-center text-muted-foreground">Authentication is currently being rebuilt. Please check back later.</p>
-        </CardContent>
+        {step === 'email' ? (
+          <form onSubmit={handleEmailSubmit}>
+            <CardHeader className="text-center">
+                <div className="flex justify-center items-center mb-4">
+                    <BudgetWiseLogo className="h-8 w-8 text-primary" />
+                </div>
+              <CardTitle>Welcome to BudgetWise</CardTitle>
+              <CardDescription>Enter your email to sign in or create an account.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="email">Email Address</label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+              {error && <p className="text-destructive text-sm text-center">{error}</p>}
+            </CardContent>
+            <CardFooter>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? 'Sending...' : 'Send One-Time Password'}
+              </Button>
+            </CardFooter>
+          </form>
+        ) : (
+          <form onSubmit={handleOtpSubmit}>
+            <CardHeader className="text-center">
+              <CardTitle>Check your Email</CardTitle>
+              <CardDescription>
+                We've sent a 6-digit code to <span className="font-semibold">{email}</span>.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                 <label htmlFor="otp">One-Time Password</label>
+                 <Input
+                    id="otp"
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    required
+                    disabled={isLoading}
+                    placeholder="_ _ _ _ _ _"
+                    className="text-center tracking-[0.5em]"
+                  />
+              </div>
+              {devOtp && (
+                  <div className="text-xs p-2 rounded-md bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200">
+                    <p className="font-bold text-center">Development OTP: {devOtp}</p>
+                    <p className="text-center">This is shown for convenience and would not appear in production.</p>
+                  </div>
+              )}
+              {error && <p className="text-destructive text-sm text-center">{error}</p>}
+            </CardContent>
+            <CardFooter className="flex-col space-y-4">
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? 'Verifying...' : 'Sign In'}
+              </Button>
+              <Button variant="link" size="sm" onClick={() => { setStep('email'); setError(null); setOtp(''); }}>
+                Use a different email
+              </Button>
+            </CardFooter>
+          </form>
+        )}
       </Card>
     </div>
   );
