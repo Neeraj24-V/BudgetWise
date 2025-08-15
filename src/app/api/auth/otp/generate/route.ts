@@ -6,13 +6,10 @@ import { Resend } from 'resend';
 
 // This function now sends a real email using Resend.
 async function sendOTPEmail(email: string, otp: string) {
-  // Moved Resend initialization inside the function to ensure API key is present.
   const resendApiKey = process.env.RESEND_API_KEY;
 
   if (!resendApiKey) {
     console.error('Resend API Key is not configured. Cannot send email.');
-    // In a real production environment, you would want this to be a hard failure.
-    // For development, we can log and fallback, but here we will throw to make the issue clear.
     throw new Error('Server is not configured to send emails. Missing RESEND_API_KEY.');
   }
   
@@ -37,8 +34,10 @@ async function sendOTPEmail(email: string, otp: string) {
 
     if (error) {
       // Log the detailed error from Resend
-      console.error('Resend API Error:', JSON.stringify(error, null, 2));
-      throw new Error(`Failed to send email via Resend: ${error.message}`);
+      const errorDetails = JSON.stringify(error, null, 2);
+      console.error('Resend API Error:', errorDetails);
+      // Pass a more informative error message
+      throw new Error(`Failed to send email via Resend. Details: ${errorDetails}`);
     }
 
     console.log('OTP email sent successfully via Resend:', data);
