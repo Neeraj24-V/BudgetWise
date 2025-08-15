@@ -9,8 +9,8 @@ import { CurrencyProvider } from "@/context/currency-context";
 import { AuthProvider } from "@/context/auth-context";
 
 
-const satoshi = localFont({
-  src: '../../public/fonts/Satoshi-Variable.otf',
+const anurati = localFont({
+  src: '../../public/fonts/anurati.otf',
   variable: '--font-sans',
   display: 'swap',
 });
@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn("min-h-screen bg-background font-sans antialiased", satoshi.variable)}>
+      <body className={cn("min-h-screen bg-background font-sans antialiased", anurati.variable)}>
         <AuthProvider>
             <ThemeProvider
                 attribute="class"
