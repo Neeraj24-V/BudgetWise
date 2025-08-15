@@ -36,16 +36,16 @@ export function FloatingNav() {
   const { isAuthenticated, logout } = useContext(AuthContext);
   const router = useRouter();
   const menuRef = useRef<HTMLDivElement>(null);
-  const navItemsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const navItemsContainerRef = useRef<HTMLDivElement>(null);
+  const tl = useRef<gsap.core.Timeline | null>(null);
 
   useEffect(() => {
-    // Hide nav on scroll down, show on scroll up
     let lastScrollY = window.scrollY;
     const fab = menuRef.current?.parentElement;
 
     const handleScroll = () => {
       if (fab) {
-         if (window.scrollY > lastScrollY) {
+         if (window.scrollY > lastScrollY && window.scrollY > 100) {
           // scroll down
           gsap.to(fab, { y: 100, duration: 0.3, ease: 'power2.out' });
         } else {
@@ -60,19 +60,31 @@ export function FloatingNav() {
     return () => window.removeEventListener('scroll', handleScroll);
 
   }, []);
+  
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Set initial state
+      gsap.set(navItemsContainerRef.current, { autoAlpha: 0 });
+      tl.current = gsap.timeline({ paused: true })
+        .to(navItemsContainerRef.current, {
+          autoAlpha: 1,
+          duration: 0.1
+        })
+        .fromTo('.nav-item', 
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.3, stagger: 0.05 }
+        );
+    }, menuRef);
+
+    return () => ctx.revert();
+  }, [])
+
 
   useEffect(() => {
     if (isOpen) {
-      gsap.to(menuRef.current, { scale: 1, opacity: 1, duration: 0.2 });
-      gsap.fromTo(navItemsRef.current, 
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.3, stagger: 0.05, delay: 0.1 }
-      );
+      tl.current?.play();
     } else {
-       if (menuRef.current) {
-         gsap.to(navItemsRef.current, { y: 20, opacity: 0, duration: 0.2, stagger: 0.05 });
-         gsap.to(menuRef.current, { scale: 0.8, opacity: 0, duration: 0.2, delay: 0.2 });
-      }
+      tl.current?.reverse();
     }
   }, [isOpen]);
 
@@ -128,15 +140,14 @@ export function FloatingNav() {
         />
       )}
 
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-6 right-6 z-50" ref={menuRef}>
         {/* Expanded Menu */}
         <div 
-          ref={menuRef} 
-          className="flex flex-col items-end space-y-3 opacity-0 scale-90"
-          style={{ transformOrigin: 'bottom right' }}
+          ref={navItemsContainerRef} 
+          className="flex flex-col items-end space-y-3"
          >
-              {isOpen && navItems.map((item, index) => (
-                  <div ref={el => navItemsRef.current[index] = el} key={item.label}>
+              {navItems.map((item) => (
+                  <div className="nav-item" key={item.label}>
                      <NavItem {...item} />
                   </div>
               ))}
@@ -158,5 +169,3 @@ export function FloatingNav() {
     </>
   );
 }
-
-    
