@@ -773,7 +773,7 @@ export default function DashboardPage() {
       {!isChatOpen && (
         <Button
           onClick={() => setIsChatOpen(true)}
-          className="fixed bottom-24 right-6 h-16 w-16 rounded-full shadow-lg z-50"
+          className="fixed bottom-28 right-6 h-16 w-16 rounded-full shadow-lg z-50 md:hidden"
           size="icon"
         >
           <Bot className="h-8 w-8" />
@@ -783,10 +783,12 @@ export default function DashboardPage() {
 
       {/* Chat Popup */}
       {isChatOpen && (
-        <div className="fixed bottom-8 right-8 z-50">
+        <div className="fixed bottom-8 right-8 z-50 md:hidden">
           <ChatInterface onClose={() => setIsChatOpen(false)} />
         </div>
       )}
     </div>
   );
 }
+
+    
