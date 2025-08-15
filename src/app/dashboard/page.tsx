@@ -16,8 +16,6 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, A
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CurrencyContext } from '@/context/currency-context';
-import { financialCoPilotFlow, FinancialCoPilotInput } from '@/ai/flows/financial-co-pilot-flow';
-
 
 interface Message {
   id: string;
@@ -78,28 +76,37 @@ function ChatInterface({ onClose }: { onClose: () => void }) {
     setInput('');
 
     try {
-      // The history for the AI should be in the simplified format
-      const historyForAI = messages.map(m => ({
+      const historyForAPI = messages.map(m => ({
         role: m.role,
         content: m.content,
       }));
 
-      const flowInput: FinancialCoPilotInput = {
-        history: historyForAI,
-        message: currentInput,
-      };
+      const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+              history: historyForAPI,
+              message: currentInput,
+          }),
+      });
+      
+      const data = await response.json();
 
-      const aiResponseText = await financialCoPilotFlow(flowInput);
+      if (!response.ok) {
+          throw new Error(data.error || "An error occurred");
+      }
 
       const aiMessage: Message = {
         id: (messages.length + 2).toString(),
         role: 'model',
-        content: aiResponseText,
+        content: data.response,
       };
       setMessages(prev => [...prev, aiMessage]);
 
     } catch (error) {
-      console.error("AI flow error:", error);
+      console.error("API error:", error);
       const errorMessage: Message = {
         id: (messages.length + 2).toString(),
         role: 'model',
@@ -609,7 +616,7 @@ export default function DashboardPage() {
                 </CardContent>
             </Card>
 
-            <div className="grid gap-6 md:grid-cols-2 mt-6">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-6">
                 {Array.isArray(budgetCategories) && budgetCategories.map(category => (
                     <Card key={category._id}>
                         <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -786,7 +793,9 @@ export default function DashboardPage() {
 
           {/* Chat Popup */}
           {isChatOpen && (
-              <ChatInterface onClose={() => setIsChatOpen(false)} />
+              <div className="fixed bottom-8 right-8 z-50">
+                <ChatInterface onClose={() => setIsChatOpen(false)} />
+              </div>
           )}
       </div>
     </div>
